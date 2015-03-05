@@ -59,6 +59,8 @@ public class SlideFragment extends Fragment {
         // Give the SlidingTabLayout the ViewPager, this must be done AFTER the ViewPager has had
         // it's PagerAdapter set.
         mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.sliding_tabs);
+        mSlidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.white));
+        mSlidingTabLayout.setBackgroundColor(getResources().getColor(R.color.primary));
         mSlidingTabLayout.setViewPager(mViewPager);
         // END_INCLUDE (setup_slidingtablayout)
     }
@@ -77,7 +79,7 @@ public class SlideFragment extends Fragment {
          */
         @Override
         public int getCount() {
-            return 10;
+            return 2;
         }
 
         /**
@@ -99,7 +101,11 @@ public class SlideFragment extends Fragment {
          */
         @Override
         public CharSequence getPageTitle(int position) {
-            return "Item " + (position + 1);
+            switch (position) {
+                case 0: return "Replies";
+                case 1: return "Photos";
+            }
+            return null;
         }
         // END_INCLUDE (pageradapter_getpagetitle)
 
@@ -109,8 +115,10 @@ public class SlideFragment extends Fragment {
          */
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
+
+            return PageFragment.newInstance(position + 1);
             // Inflate a new layout from our resources
-            View view = getActivity().getLayoutInflater().inflate(R.layout.pager_item,
+          /*  View view = getActivity().getLayoutInflater().inflate(R.layout.pager_item,
                     container, false);
             // Add the newly created View to the ViewPager
             container.addView(view);
@@ -122,7 +130,7 @@ public class SlideFragment extends Fragment {
             Log.i(LOG_TAG, "instantiateItem() [position: " + position + "]");
 
             // Return the View
-            return view;
+            return view;*/
         }
 
         /**

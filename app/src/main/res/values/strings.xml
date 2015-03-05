@@ -7,14 +7,9 @@
     <string name="signup_text">Sign Up</string>
     <string name="username_text">Username</string>
     <string name="replies_actionbar_text">Replies</string>
-
-    <color name="primary">#4CAF50</color>
-    <color name="primary_dark">#2E7D32</color>
-    <color name="white">#D2F6F5</color>
-    <color name="accent">#B9F6CA</color>
-
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">Repli</string>
     <string name="hello_world">Hello world!</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_aster">aster</string>
 
 </resources>
