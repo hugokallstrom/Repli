@@ -24,6 +24,10 @@
             android:name=".aster"
             android:label="@string/title_activity_aster" >
         </activity>
+        <activity
+            android:name=".ViewReplyActivity"
+            android:label="@string/title_activity_view_reply" >
+        </activity>
     </application>
 
 </manifest>
