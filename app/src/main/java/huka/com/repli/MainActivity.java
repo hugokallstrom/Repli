@@ -1,12 +1,22 @@
 package huka.com.repli;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.View;
+import android.widget.Button;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 import adapters.MyFragmentPagerAdapter;
+import floatingactionbuttonbasic.FloatingActionButton;
 import slidingtabs.SlidingTabLayout;
 
 public class MainActivity extends FragmentActivity {
@@ -34,5 +44,16 @@ public class MainActivity extends FragmentActivity {
         slidingTabLayout.setBackgroundColor(getResources().getColor(R.color.primary));
         slidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.white));
         slidingTabLayout.setViewPager(viewPager);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            // send to server so that new list in RecyclerViewFragment
+            // displays "Waiting for reply"
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

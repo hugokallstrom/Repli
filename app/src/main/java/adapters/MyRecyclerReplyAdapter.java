@@ -1,64 +1,43 @@
 package adapters;
 
-import android.content.Intent;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.Drawable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import huka.com.repli.R;
-import huka.com.repli.RecyclerViewFragment;
 import huka.com.repli.ReplyInfo;
-import huka.com.repli.ViewReplyActivity;
 
-/**
- * Created by hugo on 3/5/15.
- */
-public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.ViewHolder> {
+public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReplyAdapter.ViewHolder> {
 
-    private final Fragment mFragment;
     private ArrayList<ReplyInfo> mDataSet;
+    private OnItemClickListener mItemClickListener;
 
-    // BEGIN_INCLUDE(recyclerViewSampleViewHolder)
     /**
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      */
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final TextView usernameText;
         private final ImageView thumbnailView;
         private final TextView dateText;
         private final ImageView profilePictureView;
         private final TextView waitingText;
-        private final RelativeLayout activity_view_reply;
 
         public ViewHolder(View v) {
             super(v);
-            // Define click listener for the ViewHolder's View.
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.v("Clicked", "Clicked on pos: " + getPosition());
-
-                }
-            });
-
             usernameText = (TextView) v.findViewById(R.id.usernameText);
             dateText = (TextView) v.findViewById(R.id.dateText);
             waitingText = (TextView) v.findViewById(R.id.waitingText);
             thumbnailView = (ImageView) v.findViewById(R.id.thumbnailView);
             profilePictureView = (ImageView) v.findViewById(R.id.profilePicture);
-            activity_view_reply = (RelativeLayout) v.findViewById(R.id.activity_view_reply);
+            v.setOnClickListener(this);
         }
 
         public TextView getUsernameText() {
@@ -76,36 +55,44 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
         public ImageView getProfilePictureView() {
             return profilePictureView;
         }
-        public RelativeLayout getActivity_view_reply() {
-            return activity_view_reply;
+
+        @Override
+        public void onClick(View v) {
+            if (mItemClickListener != null) {
+                mItemClickListener.onItemClick(v, getPosition());
+            }
         }
 
     }
-    // END_INCLUDE(recyclerViewSampleViewHolder)
+
+    public interface OnItemClickListener {
+        public void onItemClick(View view , int position);
+    }
+
+    public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
+        this.mItemClickListener = mItemClickListener;
+    }
 
     /**
      * Initialize the dataset of the Adapter.
      *
      * @param dataSet String[] containing the data to populate views to be used by RecyclerView.
      */
-    public MyRecyclerAdapter(ArrayList<ReplyInfo> dataSet, Fragment fragment) {
+    public MyRecyclerReplyAdapter(ArrayList<ReplyInfo> dataSet) {
+        super();
         mDataSet = dataSet;
-        mFragment = fragment;
     }
 
-    // BEGIN_INCLUDE(recyclerViewOnCreateViewHolder)
     // Create new views (invoked by the layout manager)
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view.
         View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.text_row_item, viewGroup, false);
+                .inflate(R.layout.reply_row_item, viewGroup, false);
         return new ViewHolder(v);
 
     }
-    // END_INCLUDE(recyclerViewOnCreateViewHolder)
 
-    // BEGIN_INCLUDE(recyclerViewOnBindViewHolder)
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
@@ -129,7 +116,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
         drawable.setColorFilter(filter);
         return drawable;
     }
-    // END_INCLUDE(recyclerViewOnBindViewHolder)
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override

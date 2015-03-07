@@ -5,8 +5,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import huka.com.repli.CameraFragment;
 import huka.com.repli.PageFragment;
-import huka.com.repli.RecyclerViewFragment;
+import huka.com.repli.RepliesFragment;
 
 public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
     private String tabTitles[] = new String[] { "Chat", "Camera" };
@@ -25,15 +26,14 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch(position) {
-            case 0: return RecyclerViewFragment.newInstance();
-            case 1: return PageFragment.newInstance(position +1);
+            case 0: return RepliesFragment.newInstance();
+            case 1: return CameraFragment.newInstance();
         }
         return PageFragment.newInstance(position + 1);
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        // Generate title based on item position
         return tabTitles[position];
     }
 }

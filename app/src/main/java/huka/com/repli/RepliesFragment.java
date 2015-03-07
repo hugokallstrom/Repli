@@ -1,49 +1,48 @@
 package huka.com.repli;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
-import adapters.MyRecyclerAdapter;
+import adapters.MyRecyclerReplyAdapter;
 import views.RoundedImageView;
 
 
-public class RecyclerViewFragment extends android.support.v4.app.Fragment {
+public class RepliesFragment extends android.support.v4.app.Fragment {
 
-    private static final String TAG = "RecyclerViewFragment";
-    private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int DATASET_COUNT = 9;
 
-    //TO-DO REMOVE
-    private enum LayoutManagerType {
-        GRID_LAYOUT_MANAGER,
-        LINEAR_LAYOUT_MANAGER
-    }
-
-    protected LayoutManagerType mCurrentLayoutManagerType;
     protected RecyclerView mRecyclerView;
-    protected MyRecyclerAdapter mAdapter;
-    protected RecyclerView.LayoutManager mLayoutManager;
+    protected MyRecyclerReplyAdapter mAdapter;
     protected ArrayList<ReplyInfo> mDataset;
-    protected Context mContext;
+    FragmentActivity mActivity;
     private int[] thumbnails;
     private int[] profilePictures;
     private int[] fullImages;
 
-    public static RecyclerViewFragment newInstance() {
-        return new RecyclerViewFragment();
+    public static RepliesFragment newInstance() {
+        return new RepliesFragment();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.mActivity = (FragmentActivity) activity;
+        setRetainInstance(true);
     }
 
     @Override
@@ -55,53 +54,60 @@ public class RecyclerViewFragment extends android.support.v4.app.Fragment {
         profilePictures = new int[] {R.drawable.profile_picture1, R.drawable.profile_picture2, R.drawable.profile_picture3,
                 R.drawable.profile_picture4, R.drawable.profile_picture5, R.drawable.profile_picture6,
                 R.drawable.profile_picture7, R.drawable.profile_picture8, R.drawable.profile_picture9};
-        fullImages = new int[] {R.drawable.image1};
+        fullImages = new int[] {R.drawable.image1, R.drawable.image2, R.drawable.image3,
+                R.drawable.image4, R.drawable.image5, R.drawable.image6, R.drawable.image7, R.drawable.image8,
+                R.drawable.image9};
         initDataset();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.recycler_view_frag, container, false);
-        rootView.setTag(TAG);
-
-        mContext = container.getContext();
-        // BEGIN_INCLUDE(initializeRecyclerView)
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
-
-        // LinearLayoutManager is used here, this will layout the elements in a similar fashion
-        // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
-        // elements are laid out.
-        mLayoutManager = new LinearLayoutManager(getActivity());
-
-        mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-
-        if (savedInstanceState != null) {
-            // Restore saved layout manager type.
-            mCurrentLayoutManagerType = (LayoutManagerType) savedInstanceState
-                    .getSerializable(KEY_LAYOUT_MANAGER);
-        }
-       // setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        mAdapter = new MyRecyclerAdapter(mDataset, this);
-        // Set Adapter as the adapter for RecyclerView.
-        mRecyclerView.setAdapter(mAdapter);
-        // END_INCLUDE(initializeRecyclerView)
-
+        View rootView = inflater.inflate(R.layout.recycler_view_reply_frag, container, false);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerReplyView);
+        mAdapter = new MyRecyclerReplyAdapter(mDataset);
         return rootView;
     }
 
     @Override
+    public void onViewCreated(View view , Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mAdapter.SetOnItemClickListener(new MyRecyclerReplyAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v , int position) {
+
+                if(!mDataset.get(position).isReplied()) {
+                    return;
+                }
+
+                BitmapDecoder bitmapDecoder = new BitmapDecoder(getActivity());
+                Bitmap decodedImage = BitmapDecoder.decodeSampledBitmapFromResource(getResources(), fullImages[position],
+                        bitmapDecoder.getScreenWidth(), bitmapDecoder.getScreenHeight());
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                decodedImage.compress(Bitmap.CompressFormat.JPEG, 30, baos);
+                byte[] b = baos.toByteArray();
+
+                Intent intent = new Intent(getActivity(), ViewReplyActivity.class);
+                intent.putExtra("picture", b);
+                startActivity(intent);
+
+            }
+        });
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        // Save currently selected layout manager.
-        savedInstanceState.putSerializable(KEY_LAYOUT_MANAGER, mCurrentLayoutManagerType);
         super.onSaveInstanceState(savedInstanceState);
     }
 
     /**
-     * Generates Strings for RecyclerView's adapter. This data would usually come
-     * from a local content provider or remote server.
+     * Generates Data for RecyclerView's adapter. This data would otherwise
+     * come from a server.
      */
     private void initDataset() {
         String[] usernames = { "Danne", "Schött", "Jojje", "Limpa", "Hinners",
@@ -129,4 +135,5 @@ public class RecyclerViewFragment extends android.support.v4.app.Fragment {
         mDataset.get(7).setReplied(false);
         mDataset.get(8).setReplied(false);
     }
+
 }

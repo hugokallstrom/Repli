@@ -12,6 +12,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/replyFullImageView"
-        android:background="@drawable/image1"/>
+        android:layout_centerHorizontal="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/replyButtonText"
+        android:id="@+id/replyButton"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/primary"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
