@@ -36,7 +36,7 @@
         android:id="@+id/usernameTextView"
         android:layout_above="@+id/passwordTextView"
         android:layout_centerHorizontal="true"
-        android:textColor="@color/white"
+        android:textColor="@color/primary"
         android:ems="11"/>
 
     <EditText
@@ -47,7 +47,7 @@
         android:id="@+id/passwordTextView"
         android:layout_above="@+id/loginButton"
         android:layout_centerHorizontal="true"
-        android:textColor="@color/white"
+        android:textColor="@color/primary"
         android:ems="11"
         android:password="true"/>
 

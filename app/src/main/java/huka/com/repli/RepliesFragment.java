@@ -1,16 +1,21 @@
 package huka.com.repli;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +38,7 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
     private int[] thumbnails;
     private int[] profilePictures;
     private int[] fullImages;
-
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     public static RepliesFragment newInstance() {
         return new RepliesFragment();
     }
@@ -57,6 +62,7 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
         fullImages = new int[] {R.drawable.image1, R.drawable.image2, R.drawable.image3,
                 R.drawable.image4, R.drawable.image5, R.drawable.image6, R.drawable.image7, R.drawable.image8,
                 R.drawable.image9};
+
         initDataset();
     }
 
@@ -94,7 +100,45 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
 
                 Intent intent = new Intent(getActivity(), ViewReplyActivity.class);
                 intent.putExtra("picture", b);
-                startActivity(intent);
+                //startActivity(intent);
+                startActivityForResult(intent, 0);
+            }
+
+            @Override
+            public boolean onItemLongClicked(int position) {
+                final int itemPosition = position;
+                AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(getActivity());
+                dlgAlert.setTitle("Remove Conversation");
+                dlgAlert.setMessage("Do you want to remove this Conversation? (Cannot be undone)");
+                dlgAlert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mAdapter.removeItem(itemPosition);
+                    }
+                });
+                dlgAlert.setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                dlgAlert.create().show();
+                return true;
+            }
+        });
+
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipeRefresh);
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.primary_dark));
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override public void run() {
+                        mAdapter.notifyDataSetChanged();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 2000);
 
             }
         });

@@ -1,6 +1,8 @@
 package huka.com.repli;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,11 +42,28 @@ public class LoginActivity extends Activity {
     public void loginListener(View view) {
         String username = usernameTextView.getText().toString();
         String password = passwordTextView.getText().toString();
-        Log.v(TAG, "username: " + username);
-        Log.v(TAG, "password: " + password);
-        // Send REST to server with username + password
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+
+        /* Send REST request to server with username + password.
+           Use local test for front end only.
+         */
+        if(!(username.equals("") && password.equals(""))) {
+            displayErrorDialog();
+        } else {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
+        }
+    }
+
+    private void displayErrorDialog() {
+        AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
+        dlgAlert.setMessage("Wrong username or password");
+        dlgAlert.setTitle("Could not login");
+        dlgAlert.setPositiveButton("Try Again", null);
+        dlgAlert.setCancelable(true);
+        dlgAlert.create().show();
     }
 
     /**
@@ -54,7 +73,9 @@ public class LoginActivity extends Activity {
      * @param view
      */
     public void signUpListener(View view) {
-
+        Intent intent = new Intent(this, SignupActivity.class);
+        //startActivity(intent);
+        startActivityForResult(intent, 0);
     }
 
 

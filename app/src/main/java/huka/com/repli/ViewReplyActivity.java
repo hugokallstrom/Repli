@@ -59,8 +59,9 @@ public class ViewReplyActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+           Intent intent = new Intent(this, MainActivity.class);
+           //startActivity(intent);
+           startActivityForResult(intent, 0);
             // send to server so that new list in RecyclerViewFragment
             // displays "Waiting for reply"
         }

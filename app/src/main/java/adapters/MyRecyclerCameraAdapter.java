@@ -1,5 +1,7 @@
 package adapters;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +15,7 @@ import huka.com.repli.ReplyInfo;
 
 public class MyRecyclerCameraAdapter extends RecyclerView.Adapter<MyRecyclerCameraAdapter.ViewHolder> {
 
-    private ArrayList<ReplyInfo> mDataSet;
+    private ArrayList<Bitmap> mDataSet;
     private OnItemClickListener mItemClickListener;
 
     /**
@@ -54,7 +56,7 @@ public class MyRecyclerCameraAdapter extends RecyclerView.Adapter<MyRecyclerCame
      *
      * @param dataSet String[] containing the data to populate views to be used by RecyclerView.
      */
-    public MyRecyclerCameraAdapter(ArrayList<ReplyInfo> dataSet) {
+    public MyRecyclerCameraAdapter(ArrayList<Bitmap> dataSet) {
         super();
         mDataSet = dataSet;
     }
@@ -72,8 +74,8 @@ public class MyRecyclerCameraAdapter extends RecyclerView.Adapter<MyRecyclerCame
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        ReplyInfo replyInfo = mDataSet.get(position);
-        viewHolder.getRandomImage().setImageResource(R.drawable.image1);
+        Bitmap image = mDataSet.get(position);
+        viewHolder.getRandomImage().setImageBitmap(image);
     }
 
     // Return the size of your dataset (invoked by the layout manager)

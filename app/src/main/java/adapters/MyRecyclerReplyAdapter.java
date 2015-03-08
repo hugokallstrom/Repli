@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,21 +24,22 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
     /**
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      */
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private final TextView usernameText;
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         private final ImageView thumbnailView;
-        private final TextView dateText;
         private final ImageView profilePictureView;
-        private final TextView waitingText;
+        private final ImageView inactiveIcon;
+        private final TextView usernameText;
+        private final TextView dateText;
 
         public ViewHolder(View v) {
             super(v);
             usernameText = (TextView) v.findViewById(R.id.usernameText);
             dateText = (TextView) v.findViewById(R.id.dateText);
-            waitingText = (TextView) v.findViewById(R.id.waitingText);
             thumbnailView = (ImageView) v.findViewById(R.id.thumbnailView);
             profilePictureView = (ImageView) v.findViewById(R.id.profilePicture);
+            inactiveIcon = (ImageView) v.findViewById(R.id.inactiveIcon);
             v.setOnClickListener(this);
+            v.setOnLongClickListener(this);
         }
 
         public TextView getUsernameText() {
@@ -46,14 +48,14 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
         public TextView getDateTxt() {
             return dateText;
         }
-        public TextView getWaitingText() {
-            return waitingText;
-        }
         public ImageView getThumbnailView() {
             return thumbnailView;
         }
         public ImageView getProfilePictureView() {
             return profilePictureView;
+        }
+        public ImageView getInactiveIcon() {
+            return inactiveIcon;
         }
 
         @Override
@@ -63,10 +65,19 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
             }
         }
 
+        @Override
+        public boolean onLongClick(View v) {
+            if (mItemClickListener != null) {
+                return mItemClickListener.onItemLongClicked(getPosition());
+            }
+
+            return false;
+        }
     }
 
     public interface OnItemClickListener {
         public void onItemClick(View view , int position);
+        public boolean onItemLongClicked(int position);
     }
 
     public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
@@ -105,7 +116,7 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
 
         if(!replyInfo.isReplied()) {
             makeBlackAndWhite(replyInfo.getThumbnail());
-            viewHolder.getWaitingText().setText(R.string.waitingText);
+            viewHolder.getInactiveIcon().setVisibility(View.VISIBLE);
         }
     }
 
@@ -121,6 +132,11 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
     @Override
     public int getItemCount() {
         return mDataSet.size();
+    }
+
+    public void removeItem(int position) {
+        mDataSet.remove(position);
+        notifyItemRemoved(position);
     }
 }
 

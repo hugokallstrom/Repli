@@ -29,7 +29,7 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
             case 0: return RepliesFragment.newInstance();
             case 1: return CameraFragment.newInstance();
         }
-        return PageFragment.newInstance(position + 1);
+        return null;
     }
 
     @Override
