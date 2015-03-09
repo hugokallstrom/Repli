@@ -6,6 +6,7 @@
     <string name="action_logout">Logut</string>
     <string name="login_text">Login</string>
     <string name="signup_text">Sign Up</string>
+    <string name="no_account">Dont have an account? Sign up</string>
     <string name="username_text">Username</string>
     <string name="email_text">Email</string>
     <string name="password_text">Password</string>
@@ -18,7 +19,7 @@
     <string name="title_activity_view_reply">View Reply</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="replyButtonText">Send Reply</string>
+    <string name="replyButtonText">Reply</string>
     <string name="title_activity_signup">Sign up</string>
     <string name="title_activity_user_info">User Settings</string>
 

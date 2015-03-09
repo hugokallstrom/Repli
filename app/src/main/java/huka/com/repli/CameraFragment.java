@@ -133,9 +133,6 @@ public class CameraFragment extends android.support.v4.app.Fragment {
         }
 
         private ProgressDialog progressDialog;
-        private Bitmap image1;
-        private Bitmap image2;
-        private Bitmap image3;
 
         @Override
         protected void onPreExecute() {

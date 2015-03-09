@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 /**
  * Activity for letting the user login or sign up
@@ -18,7 +19,7 @@ import android.widget.EditText;
 public class LoginActivity extends Activity {
 
     private Button loginButton;
-    private Button signUpButton;
+    private TextView signUpButton;
     private AutoCompleteTextView usernameTextView;
     private EditText passwordTextView;
     private static final String TAG = "LoginActivity";
@@ -28,7 +29,7 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         loginButton = (Button) findViewById(R.id.loginButton);
-        signUpButton = (Button) findViewById(R.id.signupButton);
+        signUpButton = (TextView) findViewById(R.id.signupButton);
         usernameTextView = (AutoCompleteTextView) findViewById(R.id.usernameTextView);
         passwordTextView = (EditText) findViewById(R.id.passwordTextView);
     }

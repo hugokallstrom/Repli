@@ -132,7 +132,7 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
                 new Handler().postDelayed(new Runnable() {
                     @Override public void run() {
                         initDataset();
-                        mAdapter.setDataSet(mDataset);
+                        mAdapter.notifyDataSetChanged();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
                 }, 2000);
@@ -151,19 +151,6 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
      * come from a server.
      */
     private void initDataset() {
-        String[] usernames = { "Danne", "Schött", "Jojje", "Limpa", "Hinners",
-                               "Hiltan", "Macke", "Suther", "Bophin"};
-        String[] dates = { "2015-03-06 14:33", "2015-03-06 14:24", "2015-03-06 09:30",
-                           "2015-03-05 22:12", "2015-03-04 12:33", "2015-03-04 11:12",
-                           "2015-03-03 10:10", "2015-03-03 04:10", "2015-03-02 14:33"};
-        mDataset = new ArrayList<>();
-        for(int i = 0; i < DATASET_COUNT; i++) {
-            ReplyInfo replyInfo = new ReplyInfo(usernames[i]);
-            replyInfo.setDate(dates[i]);
-            replyInfo.setReplied(true);
-            mDataset.add(replyInfo);
-        }
-
         LoadImagesTask asyncTask = new LoadImagesTask();
         this.asyncTaskWeakRef = new WeakReference<>(asyncTask);
         asyncTask.execute(DATASET_COUNT);
@@ -186,7 +173,18 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
 
         @Override
         protected Void doInBackground(Integer... params) {
+            String[] usernames = { "Danne", "Schött", "Jojje", "Limpa", "Hinners",
+                    "Hiltan", "Macke", "Suther", "Bophin"};
+            String[] dates = { "2015-03-06 14:33", "2015-03-06 14:24", "2015-03-06 09:30",
+                    "2015-03-05 22:12", "2015-03-04 12:33", "2015-03-04 11:12",
+                    "2015-03-03 10:10", "2015-03-03 04:10", "2015-03-02 14:33"};
+
+            mDataset = new ArrayList<>();
+
             for (int i = 0; i < params[0]; i++) {
+                ReplyInfo replyInfo = new ReplyInfo(usernames[i]);
+                replyInfo.setDate(dates[i]);
+                replyInfo.setReplied(true);
                 // Load and scale images
                 BitmapDecoder bitmapDecoder = new BitmapDecoder(getActivity());
                 Bitmap decodedImage = BitmapDecoder.decodeFile(getResources(), fullImages[i]);
@@ -195,9 +193,15 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
                 Bitmap decodedProfile = BitmapDecoder.decodeSampledBitmapFromResource(getResources(), profilePictures[i],
                         50, 50);
 
-                mDataset.get(i).setImage(decodedImage);
-                mDataset.get(i).setThumbnail(blurredThumbImage);
-                mDataset.get(i).setProfilePicture(decodedProfile);
+                replyInfo.setImage(decodedImage);
+                replyInfo.setThumbnail(blurredThumbImage);
+                replyInfo.setProfilePicture(decodedProfile);
+                mDataset.add(replyInfo);
+            }
+            for (int i = 4; i < 9; i++) {
+                mDataset.get(i).setReplied(false);
+                Bitmap bwThumbnail = BitmapDecoder.makeBlackAndWhite(mDataset.get(i).getThumbnail());
+                mDataset.get(i).setThumbnail(bwThumbnail);
             }
             return null;
         }
@@ -205,6 +209,7 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
         @Override
         protected void onPostExecute(Void response) {
             super.onPostExecute(response);
+            mAdapter.setDataSet(mDataset);
             mAdapter.notifyDataSetChanged();
             progressDialog.dismiss();
         }

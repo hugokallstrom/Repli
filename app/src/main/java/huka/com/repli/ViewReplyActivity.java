@@ -29,9 +29,11 @@ public class ViewReplyActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_reply);
+        this.getActionBar().hide();
         setBackgroundPicture();
         setImageFileDir();
         Button button = (Button) findViewById(R.id.replyButton);
+        button.getBackground().setAlpha(160);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,8 +62,10 @@ public class ViewReplyActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1 && resultCode != 0) {
            Intent intent = new Intent(this, MainActivity.class);
-           //startActivity(intent);
-           startActivityForResult(intent, 0);
+           intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+           intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+           intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+           startActivity(intent);
             // send to server so that new list in RecyclerViewFragment
             // displays "Waiting for reply"
         }

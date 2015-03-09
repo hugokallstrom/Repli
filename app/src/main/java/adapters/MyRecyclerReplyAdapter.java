@@ -1,12 +1,8 @@
 package adapters;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +29,8 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
         private final ImageView inactiveIcon;
         private final TextView usernameText;
         private final TextView dateText;
+        private final int inactiveColor;
+        private final int activeColor;
 
         public ViewHolder(View v) {
             super(v);
@@ -41,6 +39,8 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
             thumbnailView = (ImageView) v.findViewById(R.id.thumbnailView);
             profilePictureView = (CircleImageView) v.findViewById(R.id.profilePicture);
             inactiveIcon = (ImageView) v.findViewById(R.id.inactiveIcon);
+            inactiveColor = v.getResources().getColor(R.color.white);
+            activeColor = v.getResources().getColor(R.color.primary_dark);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }
@@ -59,6 +59,12 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
         }
         public ImageView getInactiveIcon() {
             return inactiveIcon;
+        }
+        public int getInactiveColor() {
+            return inactiveColor;
+        }
+        public int getActiveColor() {
+            return activeColor;
         }
 
         @Override
@@ -106,36 +112,22 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
+        Log.v("adapter", "item set at " + position);
         ReplyInfo replyInfo = mDataSet.get(position);
-
+        int bordercolor;
         viewHolder.getUsernameText().setText(replyInfo.getUsername());
         viewHolder.getDateTxt().setText(replyInfo.getDate());
         viewHolder.getThumbnailView().setBackground(new BitmapDrawable(replyInfo.getThumbnail()));
         viewHolder.getProfilePictureView().setImageBitmap(replyInfo.getProfilePicture());
 
         if(!replyInfo.isReplied()) {
-            makeBlackAndWhite(replyInfo.getThumbnail());
-            viewHolder.getInactiveIcon().setVisibility(View.VISIBLE);
+            bordercolor = viewHolder.getInactiveColor();
+        } else {
+            bordercolor = viewHolder.getActiveColor();
         }
+        viewHolder.getProfilePictureView().setBorderColor(bordercolor);
     }
 
-    private Bitmap makeBlackAndWhite(Bitmap bitmap) {
-        int width, height;
-        height = bitmap.getHeight();
-        width = bitmap.getWidth();
-
-        Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(bmpGrayscale);
-        Paint paint = new Paint();
-        ColorMatrix cm = new ColorMatrix();
-        cm.setSaturation(0);
-        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
-        paint.setColorFilter(f);
-        c.drawBitmap(bitmap, 0, 0, paint);
-        return bmpGrayscale;
-
-
-    }
 
     @Override
     public int getItemCount() {
