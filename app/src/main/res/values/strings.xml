@@ -2,7 +2,8 @@
 <resources>
 
     <string name="app_name">Repli</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">User Settings</string>
+    <string name="action_logout">Logut</string>
     <string name="login_text">Login</string>
     <string name="signup_text">Sign Up</string>
     <string name="username_text">Username</string>
@@ -19,5 +20,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="replyButtonText">Send Reply</string>
     <string name="title_activity_signup">Sign up</string>
+    <string name="title_activity_user_info">User Settings</string>
 
 </resources>

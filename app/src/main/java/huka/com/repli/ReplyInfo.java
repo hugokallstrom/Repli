@@ -1,5 +1,6 @@
 package huka.com.repli;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 
@@ -10,9 +11,9 @@ public class ReplyInfo {
     private String username;
     private String date;
     private boolean replied;
-    private Drawable profilePicture;
-    private Drawable thumbnail;
-    private Drawable image;
+    private Bitmap profilePicture;
+    private Bitmap thumbnail;
+    private Bitmap image;
 
     public ReplyInfo(String username) {
         this.username = username;
@@ -38,27 +39,27 @@ public class ReplyInfo {
         this.replied = replied;
     }
 
-    public Drawable getProfilePicture() {
+    public Bitmap getProfilePicture() {
         return profilePicture;
     }
 
-    public void setProfilePicture(Drawable profilePicture) {
+    public void setProfilePicture(Bitmap profilePicture) {
         this.profilePicture = profilePicture;
     }
 
-    public Drawable getThumbnail() {
+    public Bitmap getThumbnail() {
         return thumbnail;
     }
 
-    public void setThumbnail(Drawable thumbnail) {
+    public void setThumbnail(Bitmap thumbnail) {
         this.thumbnail = thumbnail;
     }
 
-    public Drawable getImage() {
+    public Bitmap getImage() {
         return image;
     }
 
-    public void setImage(Drawable image) {
+    public void setImage(Bitmap image) {
         this.image = image;
     }
 }

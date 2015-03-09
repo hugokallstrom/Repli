@@ -20,7 +20,6 @@ public class RoundedImageView extends ImageView {
 
     public RoundedImageView(Context context) {
         super(context);
-        // TODO Auto-generated constructor stub
     }
 
     public RoundedImageView(Context context, AttributeSet attrs) {

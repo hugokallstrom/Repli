@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import huka.com.repli.CameraFragment;
-import huka.com.repli.PageFragment;
 import huka.com.repli.RepliesFragment;
 
 public class MyFragmentPagerAdapter extends FragmentPagerAdapter {

@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Camera;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -36,12 +37,13 @@ public class CameraFragment extends android.support.v4.app.Fragment {
 
     protected RecyclerView mRecyclerView;
     protected MyRecyclerCameraAdapter mAdapter;
-    protected ArrayList<Bitmap> mDataset = new ArrayList<>();
+    protected ArrayList<ReplyInfo> mDataset = new ArrayList<>();
     FragmentActivity mActivity;
     private WeakReference<MyAsyncTask> asyncTaskWeakRef;
 
     protected static final int CAPTURE_IMAGE_REQUEST_CODE = 1;
     private File file;
+    private Integer[] fullImages =  new Integer[] {R.drawable.test_image5, R.drawable.test_image3, R.drawable.test_image1};;
 
     public static CameraFragment newInstance() {
         return new CameraFragment();
@@ -106,7 +108,7 @@ public class CameraFragment extends android.support.v4.app.Fragment {
             @Override
             public void onItemClick(View v, int position) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                mDataset.get(position).compress(Bitmap.CompressFormat.JPEG, 30, baos);
+                mDataset.get(position).getImage().compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] b = baos.toByteArray();
 
                 Intent intent = new Intent(getActivity(), ViewReplyActivity.class);
@@ -143,17 +145,17 @@ public class CameraFragment extends android.support.v4.app.Fragment {
 
         @Override
         protected Void doInBackground(Void... params) {
-            // These images should come from a server
-            image1 = BitmapFactory.decodeResource(getResources(),
-                    R.drawable.image1);
-            image2 = BitmapFactory.decodeResource(getResources(),
-                    R.drawable.image2);
-            image3 = BitmapFactory.decodeResource(getResources(),
-                    R.drawable.image3);
             mDataset.clear();
-            mDataset.add(image1);
-            mDataset.add(image2);
-            mDataset.add(image3);
+            for (int i = 0; i < 3; i++) {
+                // Load and scale images
+                BitmapDecoder bitmapDecoder = new BitmapDecoder(getActivity());
+                Bitmap decodedImage = BitmapDecoder.decodeFile(getResources(), fullImages[i]);
+                Bitmap thumbImage = ThumbnailUtils.extractThumbnail(decodedImage, bitmapDecoder.getScreenWidth(), 600);
+                ReplyInfo replyInfo = new ReplyInfo("tester");
+                replyInfo.setImage(decodedImage);
+                replyInfo.setThumbnail(thumbImage);
+                mDataset.add(replyInfo);
+            }
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {

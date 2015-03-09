@@ -10,7 +10,5 @@
         <item name="android:colorAccent">@color/accent</item>
         <!--   text color -->
         <item name="android:textColorPrimary">@color/white</item>
-
-
     </style>
 </resources>

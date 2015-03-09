@@ -2,12 +2,13 @@ package huka.com.repli;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.media.ThumbnailUtils;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -21,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import adapters.MyRecyclerReplyAdapter;
@@ -35,10 +37,11 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
     protected MyRecyclerReplyAdapter mAdapter;
     protected ArrayList<ReplyInfo> mDataset;
     FragmentActivity mActivity;
-    private int[] thumbnails;
     private int[] profilePictures;
-    private int[] fullImages;
+    private Integer[] fullImages;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private WeakReference<LoadImagesTask> asyncTaskWeakRef;
+
     public static RepliesFragment newInstance() {
         return new RepliesFragment();
     }
@@ -53,15 +56,12 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        thumbnails = new int[] {R.drawable.thumbnail1, R.drawable.thumbnail2, R.drawable.thumbnail3,
-                R.drawable.thumbnail4, R.drawable.thumbnail5, R.drawable.thumbnail6,
-                R.drawable.thumbnail7, R.drawable.thumbnail8, R.drawable.thumbnail9};
         profilePictures = new int[] {R.drawable.profile_picture1, R.drawable.profile_picture2, R.drawable.profile_picture3,
                 R.drawable.profile_picture4, R.drawable.profile_picture5, R.drawable.profile_picture6,
                 R.drawable.profile_picture7, R.drawable.profile_picture8, R.drawable.profile_picture9};
-        fullImages = new int[] {R.drawable.image1, R.drawable.image2, R.drawable.image3,
-                R.drawable.image4, R.drawable.image5, R.drawable.image6, R.drawable.image7, R.drawable.image8,
-                R.drawable.image9};
+        fullImages = new Integer[] {R.drawable.test_image1, R.drawable.test_image2, R.drawable.test_image3,
+                R.drawable.test_image4, R.drawable.test_image5, R.drawable.test_image6, R.drawable.test_image7, R.drawable.test_image8,
+                R.drawable.test_image9};
 
         initDataset();
     }
@@ -90,12 +90,8 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
                     return;
                 }
 
-                BitmapDecoder bitmapDecoder = new BitmapDecoder(getActivity());
-                Bitmap decodedImage = BitmapDecoder.decodeSampledBitmapFromResource(getResources(), fullImages[position],
-                        bitmapDecoder.getScreenWidth(), bitmapDecoder.getScreenHeight());
-
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                decodedImage.compress(Bitmap.CompressFormat.JPEG, 30, baos);
+                mDataset.get(position).getImage().compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] b = baos.toByteArray();
 
                 Intent intent = new Intent(getActivity(), ViewReplyActivity.class);
@@ -114,6 +110,7 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mAdapter.removeItem(itemPosition);
+                        Log.v("Repl", "mDataset length: " + mDataset.size());
                     }
                 });
                 dlgAlert.setNegativeButton("Cancel",
@@ -127,7 +124,6 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
             }
         });
 
-
         mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipeRefresh);
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.primary_dark));
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -135,7 +131,8 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
             public void onRefresh() {
                 new Handler().postDelayed(new Runnable() {
                     @Override public void run() {
-                        mAdapter.notifyDataSetChanged();
+                        initDataset();
+                        mAdapter.setDataSet(mDataset);
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
                 }, 2000);
@@ -159,25 +156,58 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
         String[] dates = { "2015-03-06 14:33", "2015-03-06 14:24", "2015-03-06 09:30",
                            "2015-03-05 22:12", "2015-03-04 12:33", "2015-03-04 11:12",
                            "2015-03-03 10:10", "2015-03-03 04:10", "2015-03-02 14:33"};
-
         mDataset = new ArrayList<>();
         for(int i = 0; i < DATASET_COUNT; i++) {
-            Bitmap profilepic = RoundedImageView.getCroppedBitmap(BitmapFactory.decodeResource(getResources(), profilePictures[i]), 50);
-            Drawable drawableProfilepic = new BitmapDrawable(getResources(), profilepic);
-
             ReplyInfo replyInfo = new ReplyInfo(usernames[i]);
             replyInfo.setDate(dates[i]);
-            replyInfo.setReplied(true);
-            replyInfo.setProfilePicture(drawableProfilepic);
-            replyInfo.setThumbnail(getResources().getDrawable(thumbnails[i]));
             replyInfo.setReplied(true);
             mDataset.add(replyInfo);
         }
 
-        mDataset.get(4).setReplied(false);
-        mDataset.get(6).setReplied(false);
-        mDataset.get(7).setReplied(false);
-        mDataset.get(8).setReplied(false);
+        LoadImagesTask asyncTask = new LoadImagesTask();
+        this.asyncTaskWeakRef = new WeakReference<>(asyncTask);
+        asyncTask.execute(DATASET_COUNT);
+    }
+
+
+    private class LoadImagesTask extends AsyncTask<Integer, Void, Void> {
+
+
+        private LoadImagesTask() {
+        }
+
+        private ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = ProgressDialog.show(getActivity(), "Wait", "Retrieving conversations...");
+        }
+
+        @Override
+        protected Void doInBackground(Integer... params) {
+            for (int i = 0; i < params[0]; i++) {
+                // Load and scale images
+                BitmapDecoder bitmapDecoder = new BitmapDecoder(getActivity());
+                Bitmap decodedImage = BitmapDecoder.decodeFile(getResources(), fullImages[i]);
+                Bitmap thumbImage = ThumbnailUtils.extractThumbnail(decodedImage, bitmapDecoder.getScreenWidth(), 200);
+                Bitmap blurredThumbImage = BitmapDecoder.blurBitmap(thumbImage, getActivity());
+                Bitmap decodedProfile = BitmapDecoder.decodeSampledBitmapFromResource(getResources(), profilePictures[i],
+                        50, 50);
+
+                mDataset.get(i).setImage(decodedImage);
+                mDataset.get(i).setThumbnail(blurredThumbImage);
+                mDataset.get(i).setProfilePicture(decodedProfile);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void response) {
+            super.onPostExecute(response);
+            mAdapter.notifyDataSetChanged();
+            progressDialog.dismiss();
+        }
     }
 
 }

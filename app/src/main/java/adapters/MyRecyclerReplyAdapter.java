@@ -1,18 +1,21 @@
 package adapters;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
-import android.graphics.drawable.Drawable;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import huka.com.repli.R;
 import huka.com.repli.ReplyInfo;
 
@@ -26,7 +29,7 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
      */
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         private final ImageView thumbnailView;
-        private final ImageView profilePictureView;
+        private final CircleImageView profilePictureView;
         private final ImageView inactiveIcon;
         private final TextView usernameText;
         private final TextView dateText;
@@ -36,7 +39,7 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
             usernameText = (TextView) v.findViewById(R.id.usernameText);
             dateText = (TextView) v.findViewById(R.id.dateText);
             thumbnailView = (ImageView) v.findViewById(R.id.thumbnailView);
-            profilePictureView = (ImageView) v.findViewById(R.id.profilePicture);
+            profilePictureView = (CircleImageView) v.findViewById(R.id.profilePicture);
             inactiveIcon = (ImageView) v.findViewById(R.id.inactiveIcon);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
@@ -51,7 +54,7 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
         public ImageView getThumbnailView() {
             return thumbnailView;
         }
-        public ImageView getProfilePictureView() {
+        public CircleImageView getProfilePictureView() {
             return profilePictureView;
         }
         public ImageView getInactiveIcon() {
@@ -70,7 +73,6 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
             if (mItemClickListener != null) {
                 return mItemClickListener.onItemLongClicked(getPosition());
             }
-
             return false;
         }
     }
@@ -94,25 +96,22 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
         mDataSet = dataSet;
     }
 
-    // Create new views (invoked by the layout manager)
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        // Create a new view.
         View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.reply_row_item, viewGroup, false);
         return new ViewHolder(v);
 
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         ReplyInfo replyInfo = mDataSet.get(position);
 
         viewHolder.getUsernameText().setText(replyInfo.getUsername());
         viewHolder.getDateTxt().setText(replyInfo.getDate());
-        viewHolder.getThumbnailView().setBackground(replyInfo.getThumbnail());
-        viewHolder.getProfilePictureView().setBackground(replyInfo.getProfilePicture());
+        viewHolder.getThumbnailView().setBackground(new BitmapDrawable(replyInfo.getThumbnail()));
+        viewHolder.getProfilePictureView().setImageBitmap(replyInfo.getProfilePicture());
 
         if(!replyInfo.isReplied()) {
             makeBlackAndWhite(replyInfo.getThumbnail());
@@ -120,15 +119,24 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
         }
     }
 
-    private Drawable makeBlackAndWhite(Drawable drawable) {
-        ColorMatrix matrix = new ColorMatrix();
-        matrix.setSaturation(0);
-        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
-        drawable.setColorFilter(filter);
-        return drawable;
+    private Bitmap makeBlackAndWhite(Bitmap bitmap) {
+        int width, height;
+        height = bitmap.getHeight();
+        width = bitmap.getWidth();
+
+        Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmpGrayscale);
+        Paint paint = new Paint();
+        ColorMatrix cm = new ColorMatrix();
+        cm.setSaturation(0);
+        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+        paint.setColorFilter(f);
+        c.drawBitmap(bitmap, 0, 0, paint);
+        return bmpGrayscale;
+
+
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mDataSet.size();
@@ -137,6 +145,11 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
     public void removeItem(int position) {
         mDataSet.remove(position);
         notifyItemRemoved(position);
+    }
+
+    public void setDataSet(ArrayList<ReplyInfo> newDataSet){
+        mDataSet = newDataSet;
+        notifyDataSetChanged();
     }
 }
 

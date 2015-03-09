@@ -43,10 +43,9 @@ public class MainActivity extends FragmentActivity {
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(adapter);
-
         // Give the SlidingTabLayout the ViewPager
         SlidingTabLayout slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
-        // Customize the tablayout
+        // Customize the SlidingTabLayout
         slidingTabLayout.setDistributeEvenly(true);
         slidingTabLayout.setBackgroundColor(getResources().getColor(R.color.primary));
         slidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.white));
@@ -88,8 +87,7 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_signup, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -101,8 +99,11 @@ public class MainActivity extends FragmentActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if(id == R.id.action_settings) {
+            Intent intent = new Intent(this, UserInfoActivity.class);
+            startActivity(intent);
+        } else if(id == R.id.action_logout) {
+            DialogHandler.logoutDialog(this);
         }
 
         return super.onOptionsItemSelected(item);
