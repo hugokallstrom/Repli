@@ -2,7 +2,6 @@ package huka.com.repli;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import tasks.GcmRegistrationAsyncTask;
+import gcm.GcmRegistrationAsyncTask;
 
 /**
  * Activity for letting the user login or sign up
@@ -52,6 +51,7 @@ public class LoginActivity extends Activity {
         if(!(username.equals("") && password.equals(""))) {
             displayErrorDialog();
         } else {
+            Log.v("as", this.getPackageName());
             new GcmRegistrationAsyncTask(this).execute();
 
         }

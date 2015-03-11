@@ -47,6 +47,7 @@ public class RegistrationEndpoint {
         RegistrationRecord record = new RegistrationRecord();
         record.setRegId(regId);
         ofy().save().entity(record).now();
+        log.info("Registered and stored");
     }
 
     /**
