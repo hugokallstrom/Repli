@@ -110,7 +110,6 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mAdapter.removeItem(itemPosition);
-                        Log.v("Repl", "mDataset length: " + mDataset.size());
                     }
                 });
                 dlgAlert.setNegativeButton("Cancel",

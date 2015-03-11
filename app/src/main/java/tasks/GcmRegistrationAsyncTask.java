@@ -1,6 +1,7 @@
 package tasks;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -14,6 +15,8 @@ import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import huka.com.repli.MainActivity;
 
 public class GcmRegistrationAsyncTask extends AsyncTask<Void, Void, String> {
     private static Registration regService = null;
@@ -34,7 +37,7 @@ public class GcmRegistrationAsyncTask extends AsyncTask<Void, Void, String> {
                     new AndroidJsonFactory(), null)
                 // Need setRootUrl and setGoogleClientRequestInitializer only for local testing,
                 // otherwise they can be skipped
-                .setRootUrl("http://10.0.2.2:8080/_ah/api/")
+                .setRootUrl("http://192.168.1.105:8080/_ah/api/")
                 .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
                     @Override
                     public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest)
@@ -72,5 +75,10 @@ public class GcmRegistrationAsyncTask extends AsyncTask<Void, Void, String> {
     protected void onPostExecute(String msg) {
         Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
         Logger.getLogger("REGISTRATION").log(Level.INFO, msg);
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        context.startActivity(intent);
     }
 }

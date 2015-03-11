@@ -52,11 +52,8 @@ public class LoginActivity extends Activity {
         if(!(username.equals("") && password.equals(""))) {
             displayErrorDialog();
         } else {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            startActivity(intent);
+            new GcmRegistrationAsyncTask(this).execute();
+
         }
     }
 
@@ -78,8 +75,6 @@ public class LoginActivity extends Activity {
     public void signUpListener(View view) {
         Intent intent = new Intent(this, SignupActivity.class);
         //startActivity(intent);
-        GcmRegistrationAsyncTask gcmReg = new GcmRegistrationAsyncTask(this);
-        gcmReg.execute();
         startActivityForResult(intent, 0);
     }
 
