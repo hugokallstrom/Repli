@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import tasks.GcmRegistrationAsyncTask;
+
 /**
  * Activity for letting the user login or sign up
  * for the application.
@@ -76,6 +78,8 @@ public class LoginActivity extends Activity {
     public void signUpListener(View view) {
         Intent intent = new Intent(this, SignupActivity.class);
         //startActivity(intent);
+        GcmRegistrationAsyncTask gcmReg = new GcmRegistrationAsyncTask(this);
+        gcmReg.execute();
         startActivityForResult(intent, 0);
     }
 
