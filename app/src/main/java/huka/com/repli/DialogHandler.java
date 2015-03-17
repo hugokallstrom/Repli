@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 
 /**
  * Created by hugo on 3/9/15.
@@ -18,6 +19,10 @@ public class DialogHandler {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        SharedPreferences settings = context.getSharedPreferences("RepliAccount", 0);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putString(LoginActivity.PREF_ACCOUNT_NAME, "");
+                        editor.commit();
                         Intent intent = new Intent(context, LoginActivity.class);
                         context.startActivity(intent);
                     }
