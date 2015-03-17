@@ -85,14 +85,16 @@ public class UserInfoEndpoint {
         // Objectify ID generator, e.g. long or String, then you should generate the unique ID yourself prior to saving.
         //
         // If your client provides the ID then you should probably use PUT instead.
-        if(checkUserParameters(userInfo)) {
+        ofy().save().entity(userInfo).now();
+        return ofy().load().entity(userInfo).now();
+      /*/  if(checkUserParameters(userInfo)) {
             ofy().save().entity(userInfo).now();
             logger.info("Created UserInfo.");
             return ofy().load().entity(userInfo).now();
         } else {
             logger.info("User exists");
             return null;
-        }
+        }*/
     }
 
     /**
