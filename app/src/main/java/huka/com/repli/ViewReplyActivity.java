@@ -60,15 +60,15 @@ public class ViewReplyActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode != 0) {
-           Intent intent = new Intent(this, MainActivity.class);
-           intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-           intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-           intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-           startActivity(intent);
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
             // send to server so that new list in RecyclerViewFragment
             // displays "Waiting for reply"
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 }
