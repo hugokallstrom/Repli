@@ -25,7 +25,7 @@ import gcm.GcmRegistrationAsyncTask;
  */
 public class LoginActivity extends Activity {
 
-    public static final String LOCALHOST_IP = "http://192.168.1.105:8080/_ah/api/";
+    public static final String LOCALHOST_IP = "192.168.1.67:8080/_ah/api/";
     public static final String PREF_ACCOUNT_NAME = "accountname";
     private static final int REQUEST_ACCOUNT_PICKER = 2;
     private static final String TAG = "LoginActivity";
