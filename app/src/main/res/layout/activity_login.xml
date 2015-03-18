@@ -11,7 +11,7 @@
 
     <Button
         android:layout_width="240dp"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:text="@string/login_text"
         android:textColor="@color/white"
         android:id="@+id/loginButton"
@@ -31,7 +31,8 @@
         android:layout_below="@+id/loginButton"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:onClick="signUpListener"/>
+        android:onClick="signUpListener"
+        android:visibility="invisible"/>
 
     <AutoCompleteTextView
         android:layout_width="wrap_content"
@@ -41,7 +42,8 @@
         android:layout_above="@+id/passwordTextView"
         android:layout_centerHorizontal="true"
         android:textColor="@color/primary"
-        android:ems="11"/>
+        android:ems="11"
+        android:visibility="invisible"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -53,6 +55,7 @@
         android:layout_centerHorizontal="true"
         android:textColor="@color/primary"
         android:ems="11"
-        android:password="true"/>
+        android:password="true"
+        android:visibility="invisible"/>
 
 </RelativeLayout>

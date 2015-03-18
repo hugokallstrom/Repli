@@ -9,10 +9,12 @@ import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.oauth.OAuthRequestException;
 import com.google.appengine.api.users.User;
+import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.cmd.Query;
 
 import java.util.ArrayList;
+import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -21,20 +23,13 @@ import javax.inject.Named;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-/**
- * WARNING: This generated code is intended as a sample or starting point for using a
- * Google Cloud Endpoints RESTful API with an Objectify entity. It provides no data access
- * restrictions and no data validation.
- * <p/>
- * DO NOT deploy this code unchanged as part of a real application to real users.
- */
+
 @Api(
         name = "userInfoApi",
         version = "v1",
-        resource = "userInfo",
-        scopes = {AuthorizationConstants.EMAIL_SCOPE},
-        clientIds = {AuthorizationConstants.ANDROID_CLIENT_ID},
-        audiences = {AuthorizationConstants.ANDROID_AUDIENCE},
+     //   scopes = {AuthorizationConstants.EMAIL_SCOPE},
+     //   clientIds = {AuthorizationConstants.ANDROID_CLIENT_ID},
+     //   audiences = {AuthorizationConstants.ANDROID_AUDIENCE},
         namespace = @ApiNamespace(
                 ownerDomain = "backend.myapplication.hugo.example.com",
                 ownerName = "backend.myapplication.hugo.example.com",
@@ -49,7 +44,7 @@ public class UserInfoEndpoint {
 
     static {
         // Typically you would register this inside an OfyServive wrapper. See: https://code.google.com/p/objectify-appengine/wiki/BestPractices
-        ObjectifyService.register(UserInfo.class);
+      // ObjectifyService.register(UserInfo.class);
     }
 
     /**
@@ -75,24 +70,19 @@ public class UserInfoEndpoint {
     /**
      * Inserts a new {@code UserInfo}.
      */
-    @ApiMethod(
-            name = "register",
-            path = "userInfo",
-            httpMethod = ApiMethod.HttpMethod.POST)
-    public UserInfo register(UserInfo userInfo) {
-        // Typically in a RESTful API a POST does not have a known ID (assuming the ID is used in the resource path).
-        // You should validate that userInfo.id has not been set. If the ID type is not supported by the
-        // Objectify ID generator, e.g. long or String, then you should generate the unique ID yourself prior to saving.
-        //
-        // If your client provides the ID then you should probably use PUT instead.
-        if(checkUserParameters(userInfo)) {
-            ofy().save().entity(userInfo).now();
+    @ApiMethod(name = "register")
+    public UserInfo registerUser(UserInfo userInfo) {
+        logger.info("Call to register");
+      //  try {
+           // checkUserParameters(userInfo);
+            Objectify objectify = OfyService.ofy();
+            objectify.save().entity(userInfo).now();
             logger.info("Created UserInfo.");
-            return ofy().load().entity(userInfo).now();
-        } else {
-            logger.info("User exists");
+            return objectify.load().entity(userInfo).now();
+        /*} catch (InvalidPropertiesFormatException e) {
+            logger.info(e.getMessage());
             return null;
-        }
+        }*/
     }
 
     /**
@@ -122,19 +112,14 @@ public class UserInfoEndpoint {
 
     /**
      * Deletes the specified {@code UserInfo}.
-     *
-     * @param id the ID of the entity to delete
-     * @throws NotFoundException if the {@code id} does not correspond to an existing
-     *                           {@code UserInfo}
      */
-    @ApiMethod(
-            name = "remove",
-            path = "userInfo/{id}",
-            httpMethod = ApiMethod.HttpMethod.DELETE)
-    public void remove(@Named("id") Long id) throws NotFoundException {
-        checkExists(id);
-        ofy().delete().type(UserInfo.class).id(id).now();
-        logger.info("Deleted UserInfo with ID: " + id);
+    @ApiMethod(name = "unregister")
+    public void unregister(@Named("accountName") String accountName) throws NotFoundException {
+        UserInfo userinfo = ofy().load().type(UserInfo.class).filter("accountName", accountName).first().now();
+        if(userinfo.id != null) {
+            ofy().delete().type(UserInfo.class).id(userinfo.id).now();
+            logger.info("Deleted UserInfo with ID: " + userinfo.id);
+        }
     }
 
     /**
@@ -170,15 +155,13 @@ public class UserInfoEndpoint {
         }
     }
 
-    private Boolean checkUserParameters(UserInfo userInfo) {
-        Boolean valid = true;
-        if(OfyService.ofy().load().type(RegistrationRecord.class).filter("accountName", userInfo.getAccountName()).first().now() != null) {
-            valid = false;
-        } else if(OfyService.ofy().load().type(RegistrationRecord.class).filter("email", userInfo.getEmail()).first().now() != null) {
-            valid = false;
-        } else if(OfyService.ofy().load().type(RegistrationRecord.class).filter("gcmId", userInfo.getGcmId()).first().now() != null) {
-            valid = false;
+    private void checkUserParameters(UserInfo userInfo) throws InvalidPropertiesFormatException {
+        if(ofy().load().type(UserInfo.class).filter("accountName", userInfo.getAccountName()).first().now() != null) {
+            throw new InvalidPropertiesFormatException("accnount name already exists");
+        } else if(ofy().load().type(UserInfo.class).filter("email", userInfo.getEmail()).first().now() != null) {
+            throw new InvalidPropertiesFormatException("email already exists");
+        } else if(ofy().load().type(UserInfo.class).filter("gcmId", userInfo.getGcmId()).first().now() != null) {
+            throw new InvalidPropertiesFormatException("gcm id already exists");
         }
-        return valid;
     }
 }

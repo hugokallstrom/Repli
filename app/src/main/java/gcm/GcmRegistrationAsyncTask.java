@@ -3,8 +3,11 @@ package gcm;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.example.hugo.myapplication.backend.registration.Registration;
+import com.example.hugo.myapplication.backend.registration.model.RegistrationRecord;
 import com.example.hugo.myapplication.backend.userInfoApi.UserInfoApi;
 import com.example.hugo.myapplication.backend.userInfoApi.model.UserInfo;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -17,9 +20,10 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import huka.com.repli.LoginActivity;
 import huka.com.repli.MainActivity;
 
-public class GcmRegistrationAsyncTask extends AsyncTask<Void, Void, String> {
+public class GcmRegistrationAsyncTask extends AsyncTask<String, Void, String> {
     private static UserInfoApi regService = null;
     private GoogleCloudMessaging gcm;
     private Context context;
@@ -30,13 +34,13 @@ public class GcmRegistrationAsyncTask extends AsyncTask<Void, Void, String> {
     }
 
     @Override
-    protected String doInBackground(Void... params) {
+    protected String doInBackground(String... params) {
        if (regService == null) {
             UserInfoApi.Builder builder = new UserInfoApi.Builder(AndroidHttp.newCompatibleTransport(),
                    new AndroidJsonFactory(), null) //.setRootUrl("https://repliapp.appspot.com/_ah/api/");
                 // Need setRootUrl and setGoogleClientRequestInitializer only for local testing,
                 // otherwise they can be skipped
-                .setRootUrl("http://192.168.1.105:8080/_ah/api/")
+                .setRootUrl(LoginActivity.LOCALHOST_IP)
                 .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
                     @Override
                     public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest)
@@ -44,42 +48,49 @@ public class GcmRegistrationAsyncTask extends AsyncTask<Void, Void, String> {
                         abstractGoogleClientRequest.setDisableGZipContent(true);
                     }
                 });
-
             regService = builder.build();
-
         }
+        registerToService(params);
+        return registerToGcm();
+    }
 
-        String msg = "";
+    private void registerToService(String... params) {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setGcmId(registerToGcm());
+        userInfo.setAccountName(params[0]);
+        userInfo.setEmail(params[0]);
+        userInfo.setProfilePictureUrl(null);
+        try {
+            UserInfo userInfoResp = regService.register(userInfo).setPrettyPrint(true).execute();
+            Log.v("register", "registered with id: " + userInfoResp.getEmail());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String registerToGcm() {
+        String regId = "";
         try {
             if (gcm == null) {
                 gcm = GoogleCloudMessaging.getInstance(context);
             }
-            String regId = gcm.register(SENDER_ID);
-            msg = "Device registered, registration ID=" + regId;
-
-            // You should send the registration ID to your server over HTTP,
-            // so it can use GCM/HTTP or CCS to send messages to your app.
-            // The request to your server should be authenticated if your app
-            // is using accounts.
-            UserInfo userInfo = new UserInfo();
-            userInfo.setGcmId(regId);
-            regService.register(userInfo).execute();
-
+            regId = gcm.register(SENDER_ID);
+            String msg = "Device registered, registration ID=" + regId;
+            Logger.getLogger("REGISTRATION").log(Level.INFO, msg);
         } catch (IOException ex) {
             ex.printStackTrace();
-            msg = "Error: " + ex.getMessage();
         }
-        return msg;
+        return regId;
     }
 
     @Override
     protected void onPostExecute(String msg) {
-        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-        Logger.getLogger("REGISTRATION").log(Level.INFO, msg);
-        Intent intent = new Intent(context, MainActivity.class);
+       // Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+
+        /*Intent intent = new Intent(context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        context.startActivity(intent);
+        context.startActivity(intent);*/
     }
 }

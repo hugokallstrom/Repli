@@ -28,7 +28,11 @@ import static com.example.hugo.myapplication.backend.OfyService.ofy;
  * authentication! If this app is deployed, anyone can access this endpoint! If
  * you'd like to add authentication, take a look at the documentation.
  */
-@Api(name = "registration", version = "v1", namespace = @ApiNamespace(ownerDomain = "backend.myapplication.hugo.example.com", ownerName = "backend.myapplication.hugo.example.com", packagePath = ""))
+@Api(name = "registration",
+     version = "v1",
+     namespace = @ApiNamespace(ownerDomain = "backend.myapplication.hugo.example.com",
+                               ownerName = "backend.myapplication.hugo.example.com",
+                               packagePath = ""))
 public class RegistrationEndpoint {
 
     private static final Logger log = Logger.getLogger(RegistrationEndpoint.class.getName());
@@ -39,14 +43,16 @@ public class RegistrationEndpoint {
      * @param regId The Google Cloud Messaging registration Id to add
      */
     @ApiMethod(name = "register")
-    public void registerDevice(@Named("regId") String regId) {
+    public RegistrationRecord registerDevice(@Named("regId") String regId) {
         if (findRecord(regId) != null) {
             log.info("Device " + regId + " already registered, skipping register");
-            return;
+            return null;
         }
         RegistrationRecord record = new RegistrationRecord();
         record.setRegId(regId);
         ofy().save().entity(record).now();
+        log.info("registered");
+        return record;
     }
 
     /**

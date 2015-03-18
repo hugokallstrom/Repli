@@ -4,7 +4,7 @@
     <string name="app_name">Repli</string>
     <string name="action_settings">User Settings</string>
     <string name="action_logout">Logut</string>
-    <string name="login_text">Login</string>
+    <string name="login_text">Login with Google account</string>
     <string name="signup_text">Sign Up</string>
     <string name="no_account">Dont have an account? Sign up</string>
     <string name="username_text">Username</string>

@@ -61,7 +61,7 @@ public class MessagingEndpoint {
             Result result = sender.send(msg, record.getRegId(), 5);
             if (result.getMessageId() != null) {
                 log.info("Message sent to " + record.getRegId());
-                String canonicalRegId = result.getCanonicalRegistrationId();
+                String canonicalRegId   = result.getCanonicalRegistrationId();
                 if (canonicalRegId != null) {
                     // if the regId changed, we have to update the datastore
                     log.info("Registration Id changed for " + record.getRegId() + " updating to " + canonicalRegId);
