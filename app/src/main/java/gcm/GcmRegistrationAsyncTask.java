@@ -62,7 +62,9 @@ public class GcmRegistrationAsyncTask extends AsyncTask<String, Void, String> {
         userInfo.setProfilePictureUrl(null);
         try {
             UserInfo userInfoResp = regService.register(userInfo).setPrettyPrint(true).execute();
-            Log.v("register", "registered with id: " + userInfoResp.getEmail());
+            if(userInfoResp != null) {
+                Log.v("register", "registered with id: " + userInfoResp.getEmail());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
