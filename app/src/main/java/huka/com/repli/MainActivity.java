@@ -50,8 +50,7 @@ public class MainActivity extends FragmentActivity {
         slidingTabLayout.setBackgroundColor(getResources().getColor(R.color.primary));
         slidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.white));
         slidingTabLayout.setViewPager(viewPager);
-        setPrimaryFragment();
-
+        //setPrimaryFragment();
     }
 
     private void setPrimaryFragment() {
@@ -79,7 +78,6 @@ public class MainActivity extends FragmentActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //setResult(RESULT_CLOSE_ALL);
                         finish();
                     }
                 }).setNegativeButton("No", null).show();

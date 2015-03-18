@@ -36,8 +36,7 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new GcmRegistrationAsyncTask(this).execute(accountName);
-       // checkCredentials();
+        checkCredentials();
         setContentView(R.layout.activity_login);
     }
 

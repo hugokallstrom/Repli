@@ -39,6 +39,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 public class UserInfoEndpoint {
 
     private static final Logger logger = Logger.getLogger(UserInfoEndpoint.class.getName());
+    private Objectify objectify;
 
     private static final int DEFAULT_LIST_LIMIT = 20;
 
@@ -73,16 +74,16 @@ public class UserInfoEndpoint {
     @ApiMethod(name = "register")
     public UserInfo registerUser(UserInfo userInfo) {
         logger.info("Call to register");
-      //  try {
-           // checkUserParameters(userInfo);
-            Objectify objectify = OfyService.ofy();
+        try {
+            checkUserParameters(userInfo);
+            objectify = OfyService.ofy();
             objectify.save().entity(userInfo).now();
             logger.info("Created UserInfo.");
             return objectify.load().entity(userInfo).now();
-        /*} catch (InvalidPropertiesFormatException e) {
+        } catch (InvalidPropertiesFormatException e) {
             logger.info(e.getMessage());
             return null;
-        }*/
+        }
     }
 
     /**
@@ -156,11 +157,12 @@ public class UserInfoEndpoint {
     }
 
     private void checkUserParameters(UserInfo userInfo) throws InvalidPropertiesFormatException {
-        if(ofy().load().type(UserInfo.class).filter("accountName", userInfo.getAccountName()).first().now() != null) {
+        objectify = OfyService.ofy();
+        if(objectify.load().type(UserInfo.class).filter("accountName", userInfo.getAccountName()).first().now() != null) {
             throw new InvalidPropertiesFormatException("accnount name already exists");
-        } else if(ofy().load().type(UserInfo.class).filter("email", userInfo.getEmail()).first().now() != null) {
+        } else if(objectify.load().type(UserInfo.class).filter("email", userInfo.getEmail()).first().now() != null) {
             throw new InvalidPropertiesFormatException("email already exists");
-        } else if(ofy().load().type(UserInfo.class).filter("gcmId", userInfo.getGcmId()).first().now() != null) {
+        } else if(objectify.load().type(UserInfo.class).filter("gcmId", userInfo.getGcmId()).first().now() != null) {
             throw new InvalidPropertiesFormatException("gcm id already exists");
         }
     }
