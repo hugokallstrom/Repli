@@ -35,7 +35,7 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
 
     protected RecyclerView mRecyclerView;
     protected MyRecyclerReplyAdapter mAdapter;
-    protected ArrayList<ReplyInfo> mDataset;
+    protected ArrayList<ReplyInfo> mDataset = new ArrayList<>();
     FragmentActivity mActivity;
     private int[] profilePictures;
     private Integer[] fullImages;
@@ -96,7 +96,6 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
 
                 Intent intent = new Intent(getActivity(), ViewReplyActivity.class);
                 intent.putExtra("picture", b);
-                //startActivity(intent);
                 startActivityForResult(intent, 0);
             }
 

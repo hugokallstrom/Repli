@@ -2,22 +2,18 @@ package huka.com.repli;
 
 import android.accounts.AccountManager;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 
-import com.example.hugo.myapplication.backend.registration.Registration;
 import com.example.hugo.myapplication.backend.userInfoApi.UserInfoApi;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
-import gcm.GcmRegistrationAsyncTask;
+import servercalls.UserRegistrationAsyncTask;
 
 /**
  * Activity for letting the user login or sign up
@@ -25,7 +21,7 @@ import gcm.GcmRegistrationAsyncTask;
  */
 public class LoginActivity extends Activity {
 
-    public static final String LOCALHOST_IP = "192.168.1.67:8080/_ah/api/";
+    public static final String LOCALHOST_IP = "http://192.168.1.105:8080/_ah/api/";
     public static final String PREF_ACCOUNT_NAME = "accountname";
     private static final int REQUEST_ACCOUNT_PICKER = 2;
     private static final String TAG = "LoginActivity";
@@ -36,6 +32,7 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        startMain();
         checkCredentials();
         setContentView(R.layout.activity_login);
     }
@@ -51,13 +48,14 @@ public class LoginActivity extends Activity {
 
         if (credential.getSelectedAccountName() != null) {
             startMain();
+            Log.v(TAG, "found credential, starting main");
         } else {
             chooseAccount();
         }
     }
 
     private void startMain() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, UserInfoActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -71,7 +69,7 @@ public class LoginActivity extends Activity {
     private void setSelectedAccountName(String accountName) {
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(PREF_ACCOUNT_NAME, accountName);
-        editor.commit();
+        editor.apply();
         credential.setSelectedAccountName(accountName);
         this.accountName = accountName;
     }
@@ -91,9 +89,8 @@ public class LoginActivity extends Activity {
                         setSelectedAccountName(accountName);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
-                        editor.commit();
-                        Log.v("acc name: ", accountName);
-                        new GcmRegistrationAsyncTask(this).execute(accountName);
+                        editor.apply();
+                        new UserRegistrationAsyncTask(this).execute(accountName);
                     }
                 }
                 break;

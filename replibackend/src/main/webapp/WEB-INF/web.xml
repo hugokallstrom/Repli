@@ -21,7 +21,16 @@
     <servlet-mapping>
         <servlet-name>SystemServiceServlet</servlet-name>
         <url-pattern>/_ah/spi/*</url-pattern>
-    </servlet-mapping>
+	</servlet-mapping>
+
+	<servlet>
+			<servlet-name>BlobStoreServlet</servlet-name>
+			<servlet-class>com.example.hugo.myapplication.backend.BlobStoreServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+			<servlet-name>BlobStoreServlet</servlet-name>
+			<url-pattern>/*</url-pattern>
+	</servlet-mapping>
 
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>

@@ -5,8 +5,15 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.CollectionResponse;
 import com.google.api.server.spi.response.NotFoundException;
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.oauth.OAuthRequestException;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.Objectify;
@@ -27,9 +34,9 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 @Api(
         name = "userInfoApi",
         version = "v1",
-     //   scopes = {AuthorizationConstants.EMAIL_SCOPE},
-     //   clientIds = {AuthorizationConstants.ANDROID_CLIENT_ID},
-     //   audiences = {AuthorizationConstants.ANDROID_AUDIENCE},
+        scopes = {AuthorizationConstants.EMAIL_SCOPE},
+        clientIds = {AuthorizationConstants.ANDROID_CLIENT_ID},
+        audiences = {AuthorizationConstants.ANDROID_AUDIENCE},
         namespace = @ApiNamespace(
                 ownerDomain = "backend.myapplication.hugo.example.com",
                 ownerName = "backend.myapplication.hugo.example.com",
@@ -41,33 +48,18 @@ public class UserInfoEndpoint {
     private static final Logger logger = Logger.getLogger(UserInfoEndpoint.class.getName());
     private Objectify objectify;
 
-    private static final int DEFAULT_LIST_LIMIT = 20;
-
-    static {
-        // Typically you would register this inside an OfyServive wrapper. See: https://code.google.com/p/objectify-appengine/wiki/BestPractices
-      // ObjectifyService.register(UserInfo.class);
-    }
-
-    /**
-     * Returns the {@link UserInfo} with the corresponding ID.
-     *
-     * @param id the ID of the entity to be retrieved
-     * @return the entity with the corresponding ID
-     * @throws NotFoundException if there is no {@code UserInfo} with the provided ID.
-     */
-    @ApiMethod(
-            name = "get",
-            path = "userInfo/{id}",
-            httpMethod = ApiMethod.HttpMethod.GET)
-    public UserInfo get(@Named("id") Long id) throws NotFoundException {
-        logger.info("Getting UserInfo with ID: " + id);
-        UserInfo userInfo = ofy().load().type(UserInfo.class).id(id).now();
-        if (userInfo == null) {
-            throw new NotFoundException("Could not find UserInfo with ID: " + id);
+    @ApiMethod(name = "isRegistered")
+    public UserInfo isRegistered(@Named("accountName") String accountName) {
+        try {
+            checkExists(accountName);
+            UserInfo userInfo = new UserInfo();
+            userInfo.setAccountName(accountName);
+            return userInfo;
+        } catch (NotFoundException e) {
+            logger.info(e.getMessage());
+            return null;
         }
-        return userInfo;
     }
-
     /**
      * Inserts a new {@code UserInfo}.
      */
@@ -87,31 +79,6 @@ public class UserInfoEndpoint {
     }
 
     /**
-     * Updates an existing {@code UserInfo}.
-     *
-     * @param id       the ID of the entity to be updated
-     * @param userInfo the desired state of the entity
-     * @return the updated version of the entity
-     * @throws NotFoundException if the {@code id} does not correspond to an existing
-     *                           {@code UserInfo}
-     */
-    @ApiMethod(
-            name = "update",
-            path = "userInfo/{id}",
-            httpMethod = ApiMethod.HttpMethod.PUT)
-    public UserInfo update(@Named("id") Long id, UserInfo userInfo, User user) throws NotFoundException, OAuthRequestException {
-        // TODO: You should validate your ID parameter against your resource's ID here.
-        if(user != null) {
-            checkExists(id);
-            ofy().save().entity(userInfo).now();
-            logger.info("Updated UserInfo: " + userInfo);
-            return ofy().load().entity(userInfo).now();
-        } else {
-            throw new OAuthRequestException("Could not validate request");
-        }
-    }
-
-    /**
      * Deletes the specified {@code UserInfo}.
      */
     @ApiMethod(name = "unregister")
@@ -123,37 +90,25 @@ public class UserInfoEndpoint {
         }
     }
 
-    /**
-     * List all entities.
-     *
-     * @param cursor used for pagination to determine which page to return
-     * @param limit  the maximum number of entries to return
-     * @return a response that encapsulates the result list and the next page token/cursor
-     */
-    @ApiMethod(
-            name = "list",
-            path = "userInfo",
-            httpMethod = ApiMethod.HttpMethod.GET)
-    public CollectionResponse<UserInfo> list(@Nullable @Named("cursor") String cursor, @Nullable @Named("limit") Integer limit) {
-        limit = limit == null ? DEFAULT_LIST_LIMIT : limit;
-        Query<UserInfo> query = ofy().load().type(UserInfo.class).limit(limit);
-        if (cursor != null) {
-            query = query.startAt(Cursor.fromWebSafeString(cursor));
-        }
-        QueryResultIterator<UserInfo> queryIterator = query.iterator();
-        List<UserInfo> userInfoList = new ArrayList<UserInfo>(limit);
-        while (queryIterator.hasNext()) {
-            userInfoList.add(queryIterator.next());
-        }
-        return CollectionResponse.<UserInfo>builder().setItems(userInfoList).setNextPageToken(queryIterator.getCursor().toWebSafeString()).build();
+    @ApiMethod(name = "getUploadUrl")
+    public UserInfo getUploadUrl() {
+        BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+        String blobUploadUrl = blobstoreService.createUploadUrl("/blob/upload");
+        blobUploadUrl = blobUploadUrl.replace("debian", "192.168.1.105");
+        logger.info("bloburl: " + blobUploadUrl);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setProfilePictureUrl(blobUploadUrl);
+        return userInfo;
     }
 
-    private void checkExists(Long id) throws NotFoundException {
-        try {
-            ofy().load().type(UserInfo.class).id(id).safe();
-        } catch (com.googlecode.objectify.NotFoundException e) {
-            throw new NotFoundException("Could not find UserInfo with ID: " + id);
+
+    private void checkExists(String accountName) throws NotFoundException {
+        objectify = OfyService.ofy();
+        if(objectify.load().type(UserInfo.class).filter("accountName", accountName).first().now() == null) {
+            logger.info("user " + accountName + " not found");
+            throw new NotFoundException("account not found");
         }
+        logger.info("user " + accountName + " found");
     }
 
     private void checkUserParameters(UserInfo userInfo) throws InvalidPropertiesFormatException {

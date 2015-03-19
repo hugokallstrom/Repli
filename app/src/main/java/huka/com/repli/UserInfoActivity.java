@@ -4,10 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,14 +13,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import views.RoundedImageView;
+import servercalls.UploadProfilePicAsyncTask;
 
 
 public class UserInfoActivity extends Activity {
@@ -47,11 +41,20 @@ public class UserInfoActivity extends Activity {
         emailText = (TextView) findViewById(R.id.userinfo_emailText);
         profilePicture = (CircleImageView) findViewById(R.id.userinfo_picture);
         changePictureButton = (Button) findViewById(R.id.userinfo_changepictureButton);
+        setUsername();
         setProfilePicture();
+        new UploadProfilePicAsyncTask(this).execute(file);
+    }
+
+    private void setUsername() {
+        sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+        String username = sharedPreferences.getString("USERNAME", "none");
+        usernameText.setText(username);
+        emailText.setText(username);
     }
 
     private void setProfilePicture() {
-        sharedPreferences = getSharedPreferences("Name", Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
         String imagePath = sharedPreferences.getString("PROFILE_PICTURE", "none");
         if(imagePath.equals("none")) {
             profilePicture.setImageResource(R.drawable.user_profile_picture);
@@ -80,7 +83,8 @@ public class UserInfoActivity extends Activity {
             profilePicture.setImageURI(null);
             profilePicture.setImageURI(Uri.fromFile(file));
             SharedPreferences.Editor spEditor = sharedPreferences.edit();
-            spEditor.putString("PROFILE_PICTURE", Uri.fromFile(file).getPath()).commit();
+            spEditor.putString("PROFILE_PICTURE", Uri.fromFile(file).getPath()).apply();
+            new UploadProfilePicAsyncTask(this).execute(file);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

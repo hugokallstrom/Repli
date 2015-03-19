@@ -17,6 +17,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
@@ -31,5 +35,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:21.0.3'
     compile 'de.hdodenhof:circleimageview:1.2.2'
     compile 'com.google.android.gms:play-services:6.5.87'
+    compile 'org.apache.httpcomponents:httpmime:4.0-alpha3'
     compile project(path: ':replibackend', configuration: 'android-endpoints')
 }
