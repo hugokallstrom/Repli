@@ -2,7 +2,6 @@ package adapters;
 
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,18 +14,17 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import huka.com.repli.R;
 import huka.com.repli.ReplyInfo;
 
+/**
+ * Adapter for ReplyFragment.
+ */
 public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReplyAdapter.ViewHolder> {
 
     private ArrayList<ReplyInfo> mDataSet;
     private OnItemClickListener mItemClickListener;
 
-    /**
-     * Provide a reference to the type of views that you are using (custom ViewHolder)
-     */
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         private final ImageView thumbnailView;
         private final CircleImageView profilePictureView;
-        private final ImageView inactiveIcon;
         private final TextView usernameText;
         private final TextView dateText;
         private final int inactiveColor;
@@ -38,7 +36,6 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
             dateText = (TextView) v.findViewById(R.id.dateText);
             thumbnailView = (ImageView) v.findViewById(R.id.thumbnailView);
             profilePictureView = (CircleImageView) v.findViewById(R.id.profilePicture);
-            inactiveIcon = (ImageView) v.findViewById(R.id.inactiveIcon);
             inactiveColor = v.getResources().getColor(R.color.white);
             activeColor = v.getResources().getColor(R.color.primary_dark);
             v.setOnClickListener(this);
@@ -56,9 +53,6 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
         }
         public CircleImageView getProfilePictureView() {
             return profilePictureView;
-        }
-        public ImageView getInactiveIcon() {
-            return inactiveIcon;
         }
         public int getInactiveColor() {
             return inactiveColor;
@@ -94,8 +88,6 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
 
     /**
      * Initialize the dataset of the Adapter.
-     *
-     * @param dataSet String[] containing the data to populate views to be used by RecyclerView.
      */
     public MyRecyclerReplyAdapter(ArrayList<ReplyInfo> dataSet) {
         super();
@@ -112,9 +104,9 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        Log.v("adapter", "item set at " + position);
         ReplyInfo replyInfo = mDataSet.get(position);
         int bordercolor;
+        // Build the view
         viewHolder.getUsernameText().setText(replyInfo.getUsername());
         viewHolder.getDateTxt().setText(replyInfo.getDate());
         viewHolder.getThumbnailView().setBackground(new BitmapDrawable(replyInfo.getThumbnail()));

@@ -20,7 +20,9 @@ import java.io.File;
 import de.hdodenhof.circleimageview.CircleImageView;
 import servercalls.UploadProfilePicAsyncTask;
 
-
+/**
+ * Displays info about the current user; user name, email and profilepicture.
+ */
 public class UserInfoActivity extends Activity {
 
     protected static final int CAPTURE_IMAGE_REQUEST_CODE = 100;
@@ -36,14 +38,12 @@ public class UserInfoActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_info);
         setImageFileDir();
-        // Set these with values from server. Use predefined values for front-end only.
         usernameText = (TextView) findViewById(R.id.userinfo_usernameText);
         emailText = (TextView) findViewById(R.id.userinfo_emailText);
         profilePicture = (CircleImageView) findViewById(R.id.userinfo_picture);
         changePictureButton = (Button) findViewById(R.id.userinfo_changepictureButton);
         setUsername();
         setProfilePicture();
-        new UploadProfilePicAsyncTask(this).execute(file);
     }
 
     private void setUsername() {
@@ -79,9 +79,9 @@ public class UserInfoActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
-            // Send image to server, for now set it to the view.
             profilePicture.setImageURI(null);
             profilePicture.setImageURI(Uri.fromFile(file));
+            
             SharedPreferences.Editor spEditor = sharedPreferences.edit();
             spEditor.putString("PROFILE_PICTURE", Uri.fromFile(file).getPath()).apply();
             new UploadProfilePicAsyncTask(this).execute(file);

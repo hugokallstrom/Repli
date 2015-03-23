@@ -4,10 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Camera;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -18,7 +14,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,16 +25,18 @@ import java.util.ArrayList;
 
 import adapters.MyRecyclerCameraAdapter;
 import floatingactionbuttonbasic.FloatingActionButton;
-import views.RoundedImageView;
 
-
+/**
+ * Handles the "Camera" tab which lets the user
+ * take a photo and view the photos after sending
+ * a picture.
+ */
 public class CameraFragment extends android.support.v4.app.Fragment {
 
     protected RecyclerView mRecyclerView;
     protected MyRecyclerCameraAdapter mAdapter;
     protected ArrayList<ReplyInfo> mDataset = new ArrayList<>();
     FragmentActivity mActivity;
-    private WeakReference<MyAsyncTask> asyncTaskWeakRef;
 
     protected static final int CAPTURE_IMAGE_REQUEST_CODE = 1;
     private File file;
@@ -91,7 +88,7 @@ public class CameraFragment extends android.support.v4.app.Fragment {
                and load three images from memory.
              */
             MyAsyncTask asyncTask = new MyAsyncTask(this);
-            this.asyncTaskWeakRef = new WeakReference<>(asyncTask);
+            WeakReference<MyAsyncTask> asyncTaskWeakRef = new WeakReference<>(asyncTask);
             asyncTask.execute();
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -113,7 +110,6 @@ public class CameraFragment extends android.support.v4.app.Fragment {
 
                 Intent intent = new Intent(getActivity(), ViewReplyActivity.class);
                 intent.putExtra("picture", b);
-               // startActivity(intent);
                 startActivityForResult(intent, 0);
             }
         });
@@ -154,7 +150,7 @@ public class CameraFragment extends android.support.v4.app.Fragment {
                 mDataset.add(replyInfo);
             }
             try {
-                Thread.sleep(1000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

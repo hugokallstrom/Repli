@@ -90,17 +90,29 @@ public class UserInfoEndpoint {
         }
     }
 
+    // TODO Change the returned url when deploying
     @ApiMethod(name = "getUploadUrl")
     public UserInfo getUploadUrl() {
         BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
         String blobUploadUrl = blobstoreService.createUploadUrl("/blob/upload");
-        blobUploadUrl = blobUploadUrl.replace("debian", "192.168.1.105");
+        blobUploadUrl = blobUploadUrl.replace("debian", "130.239.221.160");
         logger.info("bloburl: " + blobUploadUrl);
         UserInfo userInfo = new UserInfo();
         userInfo.setProfilePictureUrl(blobUploadUrl);
         return userInfo;
     }
 
+    @ApiMethod(name = "addProfilePicture")
+    public UserInfo addProiflePicture(UserInfo userInfo) {
+        String accountName = userInfo.getAccountName();
+        String profilePictureUrl = userInfo.getProfilePictureUrl();
+        objectify = OfyService.ofy();
+        UserInfo loadedUserInfo = objectify.load().type(UserInfo.class).filter("accountName", accountName).first().now();
+        loadedUserInfo.setProfilePictureUrl(profilePictureUrl);
+        objectify.save().entity(loadedUserInfo).now();
+        logger.info("saved profile picture for " + accountName + " with url" + profilePictureUrl);
+        return loadedUserInfo;
+    }
 
     private void checkExists(String accountName) throws NotFoundException {
         objectify = OfyService.ofy();

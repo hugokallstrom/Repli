@@ -25,7 +25,6 @@ public class BlobStoreServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
-        logger.info("called blob servlet!!! ");
         List<BlobKey> blobs = BSService.blobStore().getUploads(req).get("file");
         BlobKey blobKey = blobs.get(0);
 

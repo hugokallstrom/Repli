@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable;
 
 
 /**
- * Created by hugo on 3/6/15.
+ * Temporary class used to hold info about a user.
  */
 public class ReplyInfo {
     private String username;

@@ -21,18 +21,16 @@ import servercalls.UserRegistrationAsyncTask;
  */
 public class LoginActivity extends Activity {
 
-    public static final String LOCALHOST_IP = "http://192.168.1.105:8080/_ah/api/";
+    public static final String LOCALHOST_IP = "http://130.239.221.160:8080/_ah/api/";
     public static final String PREF_ACCOUNT_NAME = "accountname";
     private static final int REQUEST_ACCOUNT_PICKER = 2;
     private static final String TAG = "LoginActivity";
     private SharedPreferences settings;
     private GoogleAccountCredential credential;
-    private String accountName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        startMain();
         checkCredentials();
         setContentView(R.layout.activity_login);
     }
@@ -55,7 +53,7 @@ public class LoginActivity extends Activity {
     }
 
     private void startMain() {
-        Intent intent = new Intent(this, UserInfoActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -71,7 +69,7 @@ public class LoginActivity extends Activity {
         editor.putString(PREF_ACCOUNT_NAME, accountName);
         editor.apply();
         credential.setSelectedAccountName(accountName);
-        this.accountName = accountName;
+        String accountName1 = accountName;
     }
 
     public void loginListener(View view) {
@@ -91,6 +89,7 @@ public class LoginActivity extends Activity {
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
                         editor.apply();
                         new UserRegistrationAsyncTask(this).execute(accountName);
+                        startMain();
                     }
                 }
                 break;

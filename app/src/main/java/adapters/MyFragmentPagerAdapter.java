@@ -8,6 +8,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import huka.com.repli.CameraFragment;
 import huka.com.repli.RepliesFragment;
 
+/**
+ * Adapter for the ViewPager, handles fragments.
+ */
 public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
     private String tabTitles[] = new String[] { "Chat", "Camera" };
     private Context context;

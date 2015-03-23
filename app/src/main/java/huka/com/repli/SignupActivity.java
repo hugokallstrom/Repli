@@ -10,7 +10,9 @@ import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
-
+/**
+ * Lets the user sign up for the service.
+ */
 public class SignupActivity extends Activity {
 
     private AutoCompleteTextView usernameTextView;

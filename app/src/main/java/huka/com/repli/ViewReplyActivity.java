@@ -19,7 +19,12 @@ import android.widget.Toast;
 
 import java.io.File;
 
+import servercalls.UploadProfilePicAsyncTask;
 
+/**
+ * Used when viewing a picture from either of the
+ * two tabs.
+ */
 public class ViewReplyActivity extends Activity {
 
     protected static final int CAPTURE_IMAGE_REQUEST_CODE = 1;
@@ -68,6 +73,7 @@ public class ViewReplyActivity extends Activity {
            startActivity(intent);
             // send to server so that new list in RecyclerViewFragment
             // displays "Waiting for reply"
+            new UploadProfilePicAsyncTask(this);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

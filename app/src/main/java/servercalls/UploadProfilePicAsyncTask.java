@@ -1,16 +1,12 @@
 package servercalls;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.example.hugo.myapplication.backend.userInfoApi.UserInfoApi;
 import com.example.hugo.myapplication.backend.userInfoApi.model.UserInfo;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
@@ -18,30 +14,26 @@ import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import huka.com.repli.LoginActivity;
+import huka.com.repli.R;
 
 /**
  * Created by hugo on 3/19/15.
  */
-public class UploadProfilePicAsyncTask extends  AsyncTask<File, Void, Boolean> {
+public class UploadProfilePicAsyncTask extends  AsyncTask<File, Void, String> {
     private static UserInfoApi regService = null;
     private Context context;
 
@@ -50,45 +42,57 @@ public class UploadProfilePicAsyncTask extends  AsyncTask<File, Void, Boolean> {
     }
 
     @Override
-    protected Boolean doInBackground(File... params) {
+    protected String doInBackground(File... params) {
         File imageFile = params[0];
+        String url = "";
         if (regService == null) {
             buildService();
             try {
                 UserInfo userInfo = regService.getUploadUrl().execute();
-                String jsonString = uploadImage(userInfo.getProfilePictureUrl(), imageFile);
-                saveResponse(jsonString);
+                HttpResponse response = uploadImage(userInfo.getProfilePictureUrl(), imageFile);
+                url = saveToDB(response);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return false;
+        return url;
     }
 
-    private String uploadImage(String profilePictureUrl, File imageFile) throws IOException {
+    private HttpResponse uploadImage(String profilePictureUrl, File imageFile) throws IOException {
         HttpClient httpclient = new DefaultHttpClient();
+        System.out.printf("url ::: " + profilePictureUrl);
         HttpPost httppost = new HttpPost(profilePictureUrl);
         FileBody fileBody  = new FileBody(imageFile.getAbsoluteFile());
         MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
         reqEntity.addPart("file", fileBody);
-
         httppost.setEntity(reqEntity);
 
         System.out.println("executing request " + httppost.getRequestLine());
         HttpResponse response = httpclient.execute(httppost);
-        HttpEntity resEntity = response.getEntity();
         httpclient.getConnectionManager().shutdown();
-        return EntityUtils.toString(response.getEntity());
+        return response;
     }
 
-    private void saveResponse(String jsonString) throws JSONException {
-        JSONObject jsonObj = new JSONObject(jsonString);
-        String servingUrl = jsonObj.getString("servingUrl");
-        String blobKey = jsonObj.getString("blobKey");
-//        regService.setProfilePicture(servingUrl, blobKey);
+    private String saveToDB(HttpResponse response) throws JSONException, IOException {
+        JSONObject jsonObject = new JSONObject(EntityUtils.toString(response.getEntity()));
+        String profilePictureUrl = jsonObject.getString("servingUrl");
+        String accountName = getAccountName();
+        UserInfo userInfo = new UserInfo();
+        userInfo.setAccountName(accountName);
+        userInfo.setProfilePictureUrl(profilePictureUrl);
+        UserInfo userInfoRes = regService.addProfilePicture(userInfo).execute();
+        String url = userInfoRes.getProfilePictureUrl();
+        System.out.println("URL: " + url);
+        return url;
+    }
+
+    private String getAccountName() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
+        String username = sharedPreferences.getString("USERNAME", "none");
+        return username;
     }
 
     private void buildService() {
@@ -108,8 +112,8 @@ public class UploadProfilePicAsyncTask extends  AsyncTask<File, Void, Boolean> {
     }
 
     @Override
-    protected void onPostExecute(Boolean bool) {
-        if(bool) {
+    protected void onPostExecute(String url) {
+        if(!url.equals("")) {
             Toast.makeText(context, "Profile picture changed", Toast.LENGTH_LONG).show();
         }
     }

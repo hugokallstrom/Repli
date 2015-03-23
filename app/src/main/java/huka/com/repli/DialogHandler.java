@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 /**
- * Created by hugo on 3/9/15.
+ * Displays dialogs.
  */
 public class DialogHandler {
     public static void logoutDialog(final Context context) {

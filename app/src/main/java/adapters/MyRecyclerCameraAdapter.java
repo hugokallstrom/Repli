@@ -1,8 +1,6 @@
 package adapters;
 
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.media.ThumbnailUtils;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +9,12 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 
-import huka.com.repli.BitmapDecoder;
 import huka.com.repli.R;
 import huka.com.repli.ReplyInfo;
 
+/**
+ * Adapter for the RecyclerView in CameraFragment.
+ */
 public class MyRecyclerCameraAdapter extends RecyclerView.Adapter<MyRecyclerCameraAdapter.ViewHolder> {
 
     private ArrayList<ReplyInfo> mDataSet;
@@ -55,8 +55,6 @@ public class MyRecyclerCameraAdapter extends RecyclerView.Adapter<MyRecyclerCame
 
     /**
      * Initialize the dataset of the Adapter.
-     *
-     * @param dataSet String[] containing the data to populate views to be used by RecyclerView.
      */
     public MyRecyclerCameraAdapter(ArrayList<ReplyInfo> dataSet) {
         super();
@@ -66,7 +64,6 @@ public class MyRecyclerCameraAdapter extends RecyclerView.Adapter<MyRecyclerCame
     // Create new views (invoked by the layout manager)
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        // Create a new view.
         View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.camera_row_item, viewGroup, false);
         return new ViewHolder(v);

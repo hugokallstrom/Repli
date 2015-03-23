@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 import huka.com.repli.LoginActivity;
 import huka.com.repli.MainActivity;
 import huka.com.repli.R;
+import huka.com.repli.UserInfoActivity;
 
 public class UserRegistrationAsyncTask extends AsyncTask<String, Void, Boolean> {
     private static UserInfoApi regService = null;
