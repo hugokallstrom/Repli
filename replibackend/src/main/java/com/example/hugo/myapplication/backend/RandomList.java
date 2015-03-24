@@ -17,10 +17,8 @@ public class RandomList {
     @Id
     Long id;
 
-
     @Index
-    private Map<String, String> pictures ;
-
+    private Map<String, String> pictures = new HashMap<>();
 
     public Map<String, String> getPictures() {
         return pictures;
@@ -29,9 +27,6 @@ public class RandomList {
     public void setPictures(String accName, String picture) {
        pictures.put(accName, picture);
     }
-
-
-
 
     public String getPictureUrl(String accName) {
         return pictures.get(accName);

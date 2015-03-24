@@ -21,13 +21,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.hugo.myapplication.backend.replyInfoApi.ReplyInfoApi;
+import com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfoCollection;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
+import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
+
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import adapters.MyRecyclerReplyAdapter;
-import views.RoundedImageView;
-
 
 public class RepliesFragment extends android.support.v4.app.Fragment {
 
@@ -40,7 +50,6 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
     private int[] profilePictures;
     private Integer[] fullImages;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private WeakReference<LoadImagesTask> asyncTaskWeakRef;
 
     public static RepliesFragment newInstance() {
         return new RepliesFragment();
@@ -149,19 +158,20 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
      * come from a server.
      */
     private void initDataset() {
-        LoadImagesTask asyncTask = new LoadImagesTask();
+        new GetReplyListAsyncTask().execute(LoginActivity.accountName);
+       /* LoadImagesTask asyncTask = new LoadImagesTask();
         this.asyncTaskWeakRef = new WeakReference<>(asyncTask);
-        asyncTask.execute(DATASET_COUNT);
+        asyncTask.execute(DATASET_COUNT);*/
     }
 
+    private class GetReplyListAsyncTask extends AsyncTask<String, Void, Void> {
 
-    private class LoadImagesTask extends AsyncTask<Integer, Void, Void> {
-
-
-        private LoadImagesTask() {
-        }
-
+        private ReplyInfoApi replyService;
         private ProgressDialog progressDialog;
+
+        private GetReplyListAsyncTask() {
+
+        }
 
         @Override
         protected void onPreExecute() {
@@ -170,38 +180,88 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
         }
 
         @Override
-        protected Void doInBackground(Integer... params) {
-            String[] usernames = { "Danne", "Schött", "Jojje", "Limpa", "Hinners",
-                    "Hiltan", "Macke", "Suther", "Bophin"};
-            String[] dates = { "2015-03-06 14:33", "2015-03-06 14:24", "2015-03-06 09:30",
-                    "2015-03-05 22:12", "2015-03-04 12:33", "2015-03-04 11:12",
-                    "2015-03-03 10:10", "2015-03-03 04:10", "2015-03-02 14:33"};
-
+        protected Void doInBackground(String... params) {
+            String accountName = params[0];
             mDataset = new ArrayList<>();
+            if (replyService == null) {
+                buildService();
+                try {
+                    //buildTestReplyInfo(accountName);
+                    ReplyInfoCollection replyInfoCollection = replyService.get(accountName).execute();
+                    List<com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo> replyInfoList = replyInfoCollection.getItems();
+                    System.out.println("Replylist: " + replyInfoList.toString());
 
-            for (int i = 0; i < params[0]; i++) {
-                ReplyInfo replyInfo = new ReplyInfo(usernames[i]);
-                replyInfo.setDate(dates[i]);
-                replyInfo.setReplied(true);
-                // Load and scale images
-                BitmapDecoder bitmapDecoder = new BitmapDecoder(getActivity());
-                Bitmap decodedImage = BitmapDecoder.decodeFile(getResources(), fullImages[i]);
-                Bitmap thumbImage = ThumbnailUtils.extractThumbnail(decodedImage, bitmapDecoder.getScreenWidth(), 200);
-                Bitmap blurredThumbImage = BitmapDecoder.blurBitmap(thumbImage, getActivity());
-                Bitmap decodedProfile = BitmapDecoder.decodeSampledBitmapFromResource(getResources(), profilePictures[i],
-                        50, 50);
+                    for (com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo replyInfo : replyInfoList) {
+                        BitmapDecoder bitmapDecoder = new BitmapDecoder(getActivity());
+                        ReplyInfo replyInfoDataSet = new ReplyInfo(replyInfo.getAccountName());
+                        replyInfoDataSet.setDate(replyInfo.getTimeStamp());
+                        replyInfoDataSet.setReplied(replyInfo.getReplied());
 
-                replyInfo.setImage(decodedImage);
-                replyInfo.setThumbnail(blurredThumbImage);
-                replyInfo.setProfilePicture(decodedProfile);
-                mDataset.add(replyInfo);
-            }
-            for (int i = 4; i < 9; i++) {
-                mDataset.get(i).setReplied(false);
-                Bitmap bwThumbnail = BitmapDecoder.makeBlackAndWhite(mDataset.get(i).getThumbnail());
-                mDataset.get(i).setThumbnail(bwThumbnail);
+                        System.out.println(replyInfo.getPictureUrl());
+                        Bitmap picture = getBitmapFromURL(replyInfo.getPictureUrl());
+                        Bitmap thumbImage = ThumbnailUtils.extractThumbnail(picture, bitmapDecoder.getScreenWidth(), 200);
+                        Bitmap blurredThumbImage = BitmapDecoder.blurBitmap(thumbImage, getActivity());
+
+                        if(!replyInfo.getReplied()) {
+                            replyInfoDataSet.setThumbnail(BitmapDecoder.makeBlackAndWhite(blurredThumbImage));
+                        } else {
+                            replyInfoDataSet.setThumbnail(blurredThumbImage);
+                        }
+
+                        replyInfoDataSet.setImage(picture);
+                        System.out.println(replyInfo.getProfilePictureUrl());
+                        Bitmap profilePicture = getBitmapFromURL(replyInfo.getProfilePictureUrl());
+                        replyInfoDataSet.setProfilePicture(profilePicture);
+                        mDataset.add(replyInfoDataSet);
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             return null;
+        }
+
+        private void buildTestReplyInfo(String accountName) {
+            try {
+                com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo replyInfo = new com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo();
+                replyInfo.setMyAccountName(accountName);
+                replyInfo.setAccountName("linus@gmail.com");
+                replyInfo.setGcmId("1231531123");
+                replyInfo.setTimeStamp("2015-03-21 12:23");
+                replyInfo.setProfilePictureUrl("http://www.uidaho.edu/~/media/Images/orgs/enrollment-mgmt/Admissions/2012/cezar-admissions-profile.ashx");
+                replyInfo.setPictureUrl("http://wanderingdanny.com/oxford/images/p/b4242667-wytham-woods-avenue.jpg");
+                replyInfo.setReplied(false);
+                replyService.insert(replyInfo).execute();
+
+                com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo replyInfo2 = new com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo();
+                replyInfo2.setMyAccountName(accountName);
+                replyInfo2.setAccountName("apan@gmail.com");
+                replyInfo2.setGcmId("1209023");
+                replyInfo2.setProfilePictureUrl("http://www.american.edu/uploads/profiles/large/chris_palmer_profile_11.jpg");
+                replyInfo2.setPictureUrl("http://www.nature.org/cs/groups/webcontent/@web/@texas/documents/media/prd_011155.jpg");
+                replyInfo2.setReplied(true);
+                replyInfo2.setTimeStamp("2015-02-12 11:53");
+                replyService.insert(replyInfo2).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void buildService() {
+            ReplyInfoApi.Builder builder = new ReplyInfoApi.Builder(AndroidHttp.newCompatibleTransport(),
+                    new AndroidJsonFactory(), null) //.setRootUrl("https://repliapp.appspot.com/_ah/api/");
+                    // Need setRootUrl and setGoogleClientRequestInitializer only for local testing,
+                    // otherwise they can be skipped
+                    .setRootUrl(LoginActivity.LOCALHOST_IP)
+                    .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+                        @Override
+                        public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest)
+                                throws IOException {
+                            abstractGoogleClientRequest.setDisableGZipContent(true);
+                        }
+                    });
+            replyService = builder.build();
         }
 
         @Override
@@ -210,6 +270,22 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
             mAdapter.setDataSet(mDataset);
             mAdapter.notifyDataSetChanged();
             progressDialog.dismiss();
+        }
+
+        public Bitmap getBitmapFromURL(String src) {
+            try {
+                URL url = new URL(src);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                Bitmap myBitmap = BitmapFactory.decodeStream(input);
+                myBitmap.getHeight();
+                return myBitmap;
+            } catch (IOException e) {
+                // Log exception
+                return null;
+            }
         }
     }
 

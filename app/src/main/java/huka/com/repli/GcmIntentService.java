@@ -31,7 +31,11 @@ public class GcmIntentService extends IntentService {
             if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 Logger.getLogger("GCM_RECEIVED").log(Level.INFO, extras.toString());
                 Toast.makeText(getApplicationContext(), extras.getString("message"), Toast.LENGTH_LONG).show();
-               // showToast(extras.getString("message"));
+
+
+                String accountName = intent.getStringExtra("accountName");
+                Logger.getLogger("accountname received").log(Level.INFO, accountName);
+
             }
         }
         GcmBroadcastReceiver.completeWakefulIntent(intent);

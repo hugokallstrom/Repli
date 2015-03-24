@@ -4,6 +4,9 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * Created by hugo on 3/17/15.
  */
@@ -24,6 +27,9 @@ public class UserInfo {
 
     @Index
     private String profilePictureUrl;
+
+    @Index
+    private HashMap<String, String> replyList;
 
     public UserInfo() {
     }
@@ -59,5 +65,21 @@ public class UserInfo {
 
     public void setGcmId(String gcmId) {
         this.gcmId = gcmId;
+    }
+
+    public HashMap<String, String> getReplyList() {
+        return replyList;
+    }
+
+    public void setReplyList(HashMap<String, String> replyList) {
+        this.replyList = replyList;
+    }
+
+    public String getPicture(String gcmId) {
+        return replyList.get(gcmId);
+    }
+
+    public void setPicture(String gcmId, String pictureUrl) {
+        replyList.put(gcmId, pictureUrl);
     }
 }

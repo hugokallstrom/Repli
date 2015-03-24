@@ -30,7 +30,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
  * DO NOT deploy this code unchanged as part of a real application to real users.
  */
 @Api(
-        name = "replyListApi",
+        name = "randomListApi",
         version = "v1",
         scopes = {AuthorizationConstants.EMAIL_SCOPE},
         clientIds = {AuthorizationConstants.ANDROID_CLIENT_ID},
@@ -60,11 +60,11 @@ public class RandomListEndpoint {
         BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
         String blobUploadUrl = blobstoreService.createUploadUrl("/blob/upload");
         System.out.println(blobUploadUrl);
-        blobUploadUrl = blobUploadUrl.replace("Maria-Dator", "192.168.1.67");
+        blobUploadUrl = blobUploadUrl.replace("debian", "192.168.1.75");
         System.out.println(blobUploadUrl);
         logger.info("bloburl: " + blobUploadUrl);
         RandomList reply = new RandomList();
-       reply.setProfilePictureUrl(accName, blobUploadUrl);
+        reply.setProfilePictureUrl(accName, blobUploadUrl);
         return reply;
     }
 
@@ -84,13 +84,10 @@ public class RandomListEndpoint {
                 }
             }
         }
+
         rep.setPictures(accountName, pictureUrl);
-       // reply.setProfilePictureUrl(accountName, reply.getPictures().get(accountName));
         objectify = OfyService.ofy();
         objectify.save().entity(rep).now();
-     //   ReplyList loadedReply = objectify.load().type(ReplyList.class).filter("accountName", accountName).first().now();
-
-      //  objectify.save().entity(loadedReply).now();
         logger.info("saved profile picture for " + accountName + " with url" +  rep.getPictures().get(accountName));
         return rep;
     }

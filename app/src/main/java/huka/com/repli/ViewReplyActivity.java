@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import java.io.File;
 
+import servercalls.SendReplyAsyncTask;
 import servercalls.UploadProfilePicAsyncTask;
 
 /**
@@ -29,6 +30,7 @@ public class ViewReplyActivity extends Activity {
 
     protected static final int CAPTURE_IMAGE_REQUEST_CODE = 1;
     private File file;
+    private String gcmId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,14 +68,14 @@ public class ViewReplyActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1 && resultCode != 0) {
-           Intent intent = new Intent(this, MainActivity.class);
-           intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-           intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-           intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-           startActivity(intent);
+            Intent intent = new Intent(this, MainActivity.class);
             // send to server so that new list in RecyclerViewFragment
             // displays "Waiting for reply"
-            new UploadProfilePicAsyncTask(this);
+            new SendReplyAsyncTask(this).execute(file.getAbsolutePath(), gcmId);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

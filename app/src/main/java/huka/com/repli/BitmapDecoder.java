@@ -65,13 +65,11 @@ public class BitmapDecoder {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeResource(res, resId, options);
-        //BitmapFactory.decodeFile(uri.getPath(),options);
         // Calculate inSampleSize
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
-        //return BitmapFactory.decodeFile(uri.getPath(), options);
         return BitmapFactory.decodeResource(res, resId, options);
     }
 

@@ -21,12 +21,13 @@ import servercalls.UserRegistrationAsyncTask;
  */
 public class LoginActivity extends Activity {
 
-    public static final String LOCALHOST_IP = "http://130.239.221.160:8080/_ah/api/";
+    public static final String LOCALHOST_IP = "http://192.168.1.75:8080/_ah/api/";
     public static final String PREF_ACCOUNT_NAME = "accountname";
     private static final int REQUEST_ACCOUNT_PICKER = 2;
     private static final String TAG = "LoginActivity";
     private SharedPreferences settings;
     private GoogleAccountCredential credential;
+    public static String accountName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,7 @@ public class LoginActivity extends Activity {
         UserInfoApi service = builder.build();
 
         if (credential.getSelectedAccountName() != null) {
+            setSelectedAccountName(credential.getSelectedAccountName());
             startMain();
             Log.v(TAG, "found credential, starting main");
         } else {
@@ -64,12 +66,12 @@ public class LoginActivity extends Activity {
         startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
     }
 
-    private void setSelectedAccountName(String accountName) {
+    private void setSelectedAccountName(String credAccountName) {
         SharedPreferences.Editor editor = settings.edit();
-        editor.putString(PREF_ACCOUNT_NAME, accountName);
+        editor.putString(PREF_ACCOUNT_NAME, credAccountName);
         editor.apply();
-        credential.setSelectedAccountName(accountName);
-        String accountName1 = accountName;
+        credential.setSelectedAccountName(credAccountName);
+        accountName = credAccountName;
     }
 
     public void loginListener(View view) {
@@ -82,14 +84,13 @@ public class LoginActivity extends Activity {
         switch (requestCode) {
             case REQUEST_ACCOUNT_PICKER:
                 if (data != null && data.getExtras() != null) {
-                    String accountName = data.getExtras().getString(AccountManager.KEY_ACCOUNT_NAME);
+                    accountName = data.getExtras().getString(AccountManager.KEY_ACCOUNT_NAME);
                     if (accountName != null) {
                         setSelectedAccountName(accountName);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
                         editor.apply();
                         new UserRegistrationAsyncTask(this).execute(accountName);
-                        startMain();
                     }
                 }
                 break;

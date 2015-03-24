@@ -12,6 +12,7 @@ public class OfyService {
 
     static {
         ObjectifyService.register(UserInfo.class);
+        ObjectifyService.register(ReplyInfo.class);
         ObjectifyService.register(RandomList.class);
     }
 

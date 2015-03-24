@@ -48,6 +48,7 @@ public class RegistrationEndpoint {
             log.info("Device " + regId + " already registered, skipping register");
             return null;
         }
+
         RegistrationRecord record = new RegistrationRecord();
         record.setRegId(regId);
         ofy().save().entity(record).now();

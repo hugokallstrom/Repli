@@ -132,6 +132,7 @@ public class UserRegistrationAsyncTask extends AsyncTask<String, Void, Boolean> 
         if(bool) {
             Toast.makeText(context, "Successfully registered", Toast.LENGTH_LONG).show();
         }
+
         Intent intent = new Intent(context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

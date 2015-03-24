@@ -81,7 +81,7 @@ public class UserInfoActivity extends Activity {
         if (requestCode == CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
             profilePicture.setImageURI(null);
             profilePicture.setImageURI(Uri.fromFile(file));
-            
+
             SharedPreferences.Editor spEditor = sharedPreferences.edit();
             spEditor.putString("PROFILE_PICTURE", Uri.fromFile(file).getPath()).apply();
             new UploadProfilePicAsyncTask(this).execute(file);

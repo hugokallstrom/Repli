@@ -16,7 +16,8 @@
             <param-value>com.example.hugo.myapplication.backend.RegistrationEndpoint,
                 com.example.hugo.myapplication.backend.MessagingEndpoint,
                 com.example.hugo.myapplication.backend.UserInfoEndpoint,
-                com.example.hugo.myapplication.backend.RandomListEndpoint</param-value>
+				com.example.hugo.myapplication.backend.ReplyInfoEndpoint,
+				com.example.hugo.myapplication.backend.RandomListEndpoint</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
