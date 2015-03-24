@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import adapters.MyRecyclerCameraAdapter;
 import floatingactionbuttonbasic.FloatingActionButton;
+import servercalls.UploadPicToRandomAsyncTask;
 
 /**
  * Handles the "Camera" tab which lets the user
@@ -86,10 +87,12 @@ public class CameraFragment extends android.support.v4.app.Fragment {
                from other users and display in this fragment.
                For now, display a place holder progressbar
                and load three images from memory.
-             */
-            MyAsyncTask asyncTask = new MyAsyncTask(this);
-            WeakReference<MyAsyncTask> asyncTaskWeakRef = new WeakReference<>(asyncTask);
-            asyncTask.execute();
+      */
+//            System.out.println(data.getData());
+            UploadPicToRandomAsyncTask asyncTask = new UploadPicToRandomAsyncTask(this.getActivity());
+          // WeakReference<MyAsyncTask> asyncTaskWeakRef = new WeakReference<>(asyncTask);
+            asyncTask.execute(file);
+
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
