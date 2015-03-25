@@ -46,13 +46,13 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
                 ownerName = "backend.myapplication.hugo.example.com",
                 packagePath = ""
         )
- )
+)
 public class RandomListEndpoint {
 
     private static final Logger logger = Logger.getLogger(RandomListEndpoint.class.getName());
     private Objectify objectify;
     private static final int DEFAULT_LIST_LIMIT = 20;
-    private static final String API_KEY = System.getProperty("gcm.api.key");
+    private static final String API_KEY = "AIzaSyAAUv20Lcb7KqThX8g-3hmnhi66qUMvaTg";
 
     // TODO Change the returned url when deploying
     @ApiMethod(name = "getUploadUrl")
@@ -72,26 +72,41 @@ public class RandomListEndpoint {
     public RandomList addPicture(@Named("pictureUrl") String pictureUrl, @Named("accountName") String accountName) {
         System.out.println("--------- in add picture!");
         CollectionResponse<RandomList> replys = list(null,100);
-        System.out.println(replys.getItems().size());
+
         RandomList rep = new RandomList();
+        rep.setPictures(accountName, pictureUrl);
         if(replys.getItems().size() > 0 ){
-            System.out.println("size of replylist > " + replys.getItems().size());
             for (RandomList randomList : replys.getItems()) {
-                if(randomList.getPictures().size() < 4){
-                    System.out.println("Set rep = reply");
+                System.out.println("randomList contains  " + randomList.getPictures().size() + " pictures.");
+                if(randomList.getPictures().size() < 3){
                     rep = randomList;
+                    rep.setPictures(accountName, pictureUrl);
+                    objectify = OfyService.ofy();
+                    objectify.save().entity(rep).now();
                     break;
                 }
-                if(randomList.getPictures().size() == 4){
+
+                if(randomList.getPictures().size() == 3){
+                    System.out.println(accountName + " is 3!");
+                    rep = randomList;
+                    rep.setPictures(accountName, pictureUrl);
+                    objectify = OfyService.ofy();
+                    objectify.save().entity(rep).now();
                     sendOutPictures(randomList);
-                    System.out.println(accountName + " is 4!");
+                }
+                if(randomList.getPictures().size() > 3){
+                    System.out.println("add new replylist");
+                    objectify = OfyService.ofy();
+                    objectify.save().entity(rep).now();
+                    break;
                 }
             }
+        }else {
+            System.out.println("add first randomList");
+            objectify = OfyService.ofy();
+            objectify.save().entity(rep).now();
         }
-        rep.setPictures(accountName, pictureUrl);
-        objectify = OfyService.ofy();
-        objectify.save().entity(rep).now();
-        logger.info("saved profile picture for " + accountName + " with url" +  rep.getPictures().get(accountName));
+
         return rep;
     }
 

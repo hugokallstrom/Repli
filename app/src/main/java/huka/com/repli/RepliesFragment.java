@@ -201,8 +201,8 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
                         String url = replyInfo.getPictureUrl();
                         String profileUrl = replyInfo.getProfilePictureUrl();
                         if(url.contains("0.0.0.0") || profileUrl.contains("0.0.0.0")) {
-                            url = url.replace("0.0.0.0", "130.239.220.166");
-                            profileUrl = profileUrl.replace("0.0.0.0", "130.239.220.166");
+                            url = url.replace("0.0.0.0", "130.239.124.241");
+                            profileUrl = profileUrl.replace("0.0.0.0", "130.239.124.241");
                         }
                         System.out.println(url);
                         Bitmap picture = getBitmapFromURL(url);
