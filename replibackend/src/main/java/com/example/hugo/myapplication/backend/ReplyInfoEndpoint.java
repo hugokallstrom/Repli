@@ -73,11 +73,24 @@ public class ReplyInfoEndpoint {
             name = "insert",
             path = "replyInfo",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public ReplyInfo insert(ReplyInfo replyInfo) {
+    public void insert(ReplyInfo replyInfo) {
         objectify = OfyService.ofy();
-        objectify.save().entity(replyInfo).now();
-        logger.info("Created ReplyInfo.");
-        return ofy().load().entity(replyInfo).now();
+        ReplyInfo tempReplyInfo = conversationExists(replyInfo.getAccountName(), replyInfo.getMyAccountName());
+        if(tempReplyInfo != null) {
+            tempReplyInfo.setPictureUrl(replyInfo.getPictureUrl());
+            tempReplyInfo.setTimeStamp(replyInfo.getTimeStamp());
+            objectify.save().entity(tempReplyInfo).now();
+        } else {
+            objectify.save().entity(replyInfo).now();
+            logger.info("Created ReplyInfo.");
+        }
+    }
+
+    private ReplyInfo conversationExists(String myAccountName, String receiverAccountName) {
+        ReplyInfo replyInfo = objectify.load().type(ReplyInfo.class)
+                .filter("myAccountName", myAccountName)
+                .filter("accountName", receiverAccountName).first().now();
+        return replyInfo;
     }
 
     @ApiMethod(name = "replied")
@@ -101,13 +114,15 @@ public class ReplyInfoEndpoint {
      */
     @ApiMethod(
             name = "remove",
-            path = "replyInfo/{id}",
             httpMethod = ApiMethod.HttpMethod.DELETE)
-    public void remove(@Named("id") String myAccountName) throws NotFoundException {
+    public void remove(@Named("myAccountName") String myAccountName, @Named("receiverAccountName") String receiverAccountName) throws NotFoundException {
         checkExists(myAccountName);
-        objectify = OfyService.ofy();
-        objectify.delete().type(ReplyInfo.class).id(myAccountName).now();
-        logger.info("Deleted ReplyInfo with ID: " + myAccountName);
+        ReplyInfo replyInfo = conversationExists(myAccountName, receiverAccountName);
+        if(replyInfo != null) {
+            objectify = OfyService.ofy();
+            objectify.delete().type(ReplyInfo.class).id(replyInfo.id).now();
+            logger.info("Deleted ReplyInfo with ID: " + myAccountName);
+        }
     }
 
     private void checkExists(String myAccountName) throws NotFoundException {

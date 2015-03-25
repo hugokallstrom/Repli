@@ -21,7 +21,7 @@ import servercalls.UserRegistrationAsyncTask;
  */
 public class LoginActivity extends Activity {
 
-    public static final String LOCALHOST_IP = "http://130.239.220.166:8080/_ah/api/";
+    public static final String LOCALHOST_IP = "http://130.239.124.241:8080/_ah/api/";
     public static final String PREF_ACCOUNT_NAME = "accountname";
     private static final int REQUEST_ACCOUNT_PICKER = 2;
     private static final String TAG = "LoginActivity";
