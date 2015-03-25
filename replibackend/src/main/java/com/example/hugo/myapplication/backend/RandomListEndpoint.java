@@ -74,23 +74,42 @@ public class RandomListEndpoint {
         CollectionResponse<RandomList> replys = list(null,100);
         System.out.println(replys.getItems().size());
         RandomList rep = new RandomList();
+        rep.setPictures(accountName, pictureUrl);
         if(replys.getItems().size() > 0 ){
-            System.out.println("size of replylist > " + replys.getItems().size());
+
             for (RandomList randomList : replys.getItems()) {
-                if(randomList.getPictures().size() < 4){
-                    System.out.println("Set rep = reply");
+                System.out.println("size of randomList " + randomList.getPictures().size());
+                if(randomList.getPictures().size() < 3){
+
                     rep = randomList;
+                    rep.setPictures(accountName, pictureUrl);
+                    objectify = OfyService.ofy();
+                    objectify.save().entity(rep).now();
                     break;
                 }
-                if(randomList.getPictures().size() == 4){
-                    sendOutPictures(randomList);
+                if(randomList.getPictures().size() == 3){
                     System.out.println(accountName + " is 4!");
+                    rep = randomList;
+                    rep.setPictures(accountName, pictureUrl);
+                    objectify = OfyService.ofy();
+                    objectify.save().entity(rep).now();
+                    sendOutPictures(randomList);
+
+                    break;
+                }
+                if(randomList.getPictures().size() > 3){
+                    System.out.println(accountName + " > 3!");
+                    rep.setPictures(accountName, pictureUrl);
+                    objectify = OfyService.ofy();
+                    objectify.save().entity(rep).now();
+                    break;
                 }
             }
+        }else {
+            System.out.println("First random List");
+            objectify = OfyService.ofy();
+            objectify.save().entity(rep).now();
         }
-        rep.setPictures(accountName, pictureUrl);
-        objectify = OfyService.ofy();
-        objectify.save().entity(rep).now();
         logger.info("saved profile picture for " + accountName + " with url" +  rep.getPictures().get(accountName));
         return rep;
     }
