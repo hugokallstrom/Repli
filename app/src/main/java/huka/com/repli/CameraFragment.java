@@ -2,8 +2,12 @@ package huka.com.repli;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -20,7 +24,11 @@ import android.view.ViewGroup;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 import adapters.MyRecyclerCameraAdapter;
@@ -123,12 +131,12 @@ public class CameraFragment extends android.support.v4.app.Fragment {
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    private class MyAsyncTask extends AsyncTask<Void, Void, Void> {
+    public class MyAsyncTask extends AsyncTask<String, Void, Void> {
 
-        private WeakReference<CameraFragment> fragmentWeakRef;
+      //  private WeakReference<CameraFragment> fragmentWeakRef;
 
-        private MyAsyncTask (CameraFragment fragment) {
-            this.fragmentWeakRef = new WeakReference<>(fragment);
+        private MyAsyncTask () {
+           // this.fragmentWeakRef = new WeakReference<>(fragment);
         }
 
         private ProgressDialog progressDialog;
@@ -136,38 +144,80 @@ public class CameraFragment extends android.support.v4.app.Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = ProgressDialog.show(getActivity(), "Wait", "Finding images around the world...");
+      //      progressDialog = ProgressDialog.show(getActivity(), "Wait", "Finding images around the world...");
         }
 
+        public Bitmap getBitmapFromURL(String src) {
+            try {
+                URL url = new URL(src);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                Bitmap myBitmap = BitmapFactory.decodeStream(input);
+                myBitmap.getHeight();
+                return myBitmap;
+            } catch (IOException e) {
+                // Log exception
+                return null;
+            }
+        }
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(String... params) {
+            System.out.println("myAsyncTask!");
+            String url = params[0];
+//            String url = "http://"+LoginActivity.LOCALHOST_IP2+":8080/_ah/img/"+blobKey;
+            Bitmap picture = getBitmapFromURL(url);
             mDataset.clear();
-            for (int i = 0; i < 3; i++) {
                 // Load and scale images
                 BitmapDecoder bitmapDecoder = new BitmapDecoder(getActivity());
-                Bitmap decodedImage = BitmapDecoder.decodeFile(getResources(), fullImages[i]);
-                Bitmap thumbImage = ThumbnailUtils.extractThumbnail(decodedImage, bitmapDecoder.getScreenWidth(), 600);
+
+                Bitmap thumbImage = ThumbnailUtils.extractThumbnail(picture, bitmapDecoder.getScreenWidth(), 600);
                 ReplyInfo replyInfo = new ReplyInfo("tester");
-                replyInfo.setImage(decodedImage);
+                replyInfo.setImage(picture);
                 replyInfo.setThumbnail(thumbImage);
                 mDataset.add(replyInfo);
-            }
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
             return null;
         }
 
         @Override
         protected void onPostExecute(Void response) {
             super.onPostExecute(response);
-            progressDialog.dismiss();
-            if (this.fragmentWeakRef.get() != null) {
+//            progressDialog.dismiss();
+        //    if (this.fragmentWeakRef.get() != null) {
                 mAdapter.notifyDataSetChanged();
-            }
+        //    }
         }
     }
 
+
+    //register your activity onResume()
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.getActivity().registerReceiver(mMessageReceiver, new IntentFilter("unique_name"));
+    }
+
+    //Must unregister onPause()
+    @Override
+    public void onPause() {
+        super.onPause();
+        this.getActivity().unregisterReceiver(mMessageReceiver);
+    }
+
+
+    //This is the handler that will manager to process the broadcast intent
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            // Extract data included in the Intent
+            String message = intent.getStringExtra("message");
+            System.out.println("cameraFrag " + message);
+            String url = "http://"+LoginActivity.LOCALHOST_IP2+":8080/_ah/img/"+message;
+            System.out.println(url);
+            new MyAsyncTask().execute(url);
+        }
+    };
 }

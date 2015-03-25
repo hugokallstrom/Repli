@@ -61,6 +61,7 @@ public class RandomListEndpoint {
         String blobUploadUrl = blobstoreService.createUploadUrl("/blob/upload");
         System.out.println(blobUploadUrl);
         blobUploadUrl = blobUploadUrl.replace("Maria-Dator", AuthorizationConstants.LOCAL_IP);
+        blobUploadUrl = blobUploadUrl.replace("debian", AuthorizationConstants.LOCAL_IP);
         System.out.println(blobUploadUrl);
         logger.info("bloburl: " + blobUploadUrl);
         RandomList reply = new RandomList();
@@ -102,6 +103,7 @@ public class RandomListEndpoint {
                     rep.setPictures(accountName, pictureUrl);
                     objectify = OfyService.ofy();
                     objectify.save().entity(rep).now();
+                    objectify.delete().type(RandomList.class).id(randomList.id).now();
                     break;
                 }
             }

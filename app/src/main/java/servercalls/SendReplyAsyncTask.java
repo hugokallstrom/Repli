@@ -70,7 +70,7 @@ public class SendReplyAsyncTask extends AsyncTask<String, Void, String>  {
 
     private ReplyInfo buildReplyInfo(UserInfo userInfo, String pictureUrl) {
         ReplyInfo replyInfo = new ReplyInfo();
-        replyInfo.setMyAccountName("linus.oberg@gmail.com");
+        replyInfo.setMyAccountName(receiverAccountName);
         replyInfo.setAccountName(userInfo.getAccountName());
         replyInfo.setGcmId(userInfo.getGcmId());
         replyInfo.setProfilePictureUrl(userInfo.getProfilePictureUrl());

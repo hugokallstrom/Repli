@@ -67,7 +67,7 @@ public class UploadPicToRandomAsyncTask extends AsyncTask<File, Void, String>  {
 
     private HttpResponse uploadImage(String profilePictureUrl, File imageFile) throws IOException {
         HttpClient httpclient = new DefaultHttpClient();
-        System.out.printf("url ::: " + profilePictureUrl);
+        System.out.printf("url ->: " + profilePictureUrl);
         HttpPost httppost = new HttpPost(profilePictureUrl);
         FileBody fileBody = new FileBody(imageFile.getAbsoluteFile());
         MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -91,10 +91,10 @@ public class UploadPicToRandomAsyncTask extends AsyncTask<File, Void, String>  {
         String blobKey = parts[1];
         System.out.println("Adding picture! " + profilePictureUrl + "BLOBKEY " + blobKey        );
         RandomList randomList = regService.addPicture(blobKey, accountName).execute();
-        RandomList randomList2 = regService.addPicture("kalle", "linyx5@gmail.com").execute();
-        RandomList randomList3 = regService.addPicture("kalle", "linyx6@gmail.com").execute();
-        RandomList randomList4 = regService.addPicture("kalle", "linyx7@gmail.com").execute();
-        RandomList randomList5 = regService.addPicture("kalle", "linyx8@gmail.com").execute();
+        RandomList randomList2 = regService.addPicture("kal1le", "liny2@gmail.com").execute();
+        RandomList randomList3 = regService.addPicture("kal1le", "liny26@gmail.com").execute();
+        RandomList randomList4 = regService.addPicture("kal1le", "liny27@gmail.com").execute();
+        RandomList randomList5 = regService.addPicture("kal1le", "liny28@gmail.com").execute();
         System.out.println("profpic: " + profilePictureUrl + " accName;: " + accountName);
         String url = (String) randomList.getPictures().get(getAccountName());
         System.out.println("URL: " + url);
