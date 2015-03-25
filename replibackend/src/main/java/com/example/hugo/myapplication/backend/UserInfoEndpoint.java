@@ -95,10 +95,21 @@ public class UserInfoEndpoint {
     public UserInfo getUploadUrl() {
         BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
         String blobUploadUrl = blobstoreService.createUploadUrl("/blob/upload");
-        blobUploadUrl = blobUploadUrl.replace("debian", "192.168.1.75");
+        blobUploadUrl = blobUploadUrl.replace("debian", AuthorizationConstants.LOCAL_IP);
         logger.info("bloburl: " + blobUploadUrl);
         UserInfo userInfo = new UserInfo();
         userInfo.setProfilePictureUrl(blobUploadUrl);
+        return userInfo;
+    }
+
+    @ApiMethod(name = "getUser")
+    public UserInfo getUser(@Named("accountName") String accountName) {
+        UserInfo userInfo = null;
+        try {
+            userInfo = checkExists(accountName);
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        }
         return userInfo;
     }
 
@@ -114,13 +125,15 @@ public class UserInfoEndpoint {
         return loadedUserInfo;
     }
 
-    private void checkExists(String accountName) throws NotFoundException {
+    private UserInfo checkExists(String accountName) throws NotFoundException {
         objectify = OfyService.ofy();
-        if(objectify.load().type(UserInfo.class).filter("accountName", accountName).first().now() == null) {
+        UserInfo userInfo = objectify.load().type(UserInfo.class).filter("accountName", accountName).first().now();
+        if(userInfo == null) {
             logger.info("user " + accountName + " not found");
             throw new NotFoundException("account not found");
         }
         logger.info("user " + accountName + " found");
+        return userInfo;
     }
 
     private void checkUserParameters(UserInfo userInfo) throws InvalidPropertiesFormatException {

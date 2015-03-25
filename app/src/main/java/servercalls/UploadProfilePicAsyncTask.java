@@ -12,7 +12,6 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -49,8 +48,9 @@ public class UploadProfilePicAsyncTask extends  AsyncTask<File, Void, String> {
             buildService();
             try {
                 UserInfo userInfo = regService.getUploadUrl().execute();
-                HttpResponse response = uploadImage(userInfo.getProfilePictureUrl(), imageFile);
-                url = saveToDB(response);
+                HttpResponse response = UploadImage.uploadImage(userInfo.getProfilePictureUrl(), imageFile);
+               // HttpResponse response = uploadImage(userInfo.getProfilePictureUrl(), imageFile);
+                url = saveProfilePicToDB(response);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
@@ -76,7 +76,7 @@ public class UploadProfilePicAsyncTask extends  AsyncTask<File, Void, String> {
         return response;
     }
 
-    private String saveToDB(HttpResponse response) throws JSONException, IOException {
+    private String saveProfilePicToDB(HttpResponse response) throws JSONException, IOException {
         JSONObject jsonObject = new JSONObject(EntityUtils.toString(response.getEntity()));
         String profilePictureUrl = jsonObject.getString("servingUrl");
         String accountName = getAccountName();

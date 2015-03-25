@@ -105,6 +105,7 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
 
                 Intent intent = new Intent(getActivity(), ViewReplyActivity.class);
                 intent.putExtra("picture", b);
+                intent.putExtra("accountName", mDataset.get(position).getUsername());
                 startActivityForResult(intent, 0);
             }
 
@@ -159,7 +160,7 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
      */
     private void initDataset() {
         new GetReplyListAsyncTask().execute(LoginActivity.accountName);
-       /* LoadImagesTask asyncTask = new LoadImagesTask();
+        /*LoadImagesTask asyncTask = new LoadImagesTask();
         this.asyncTaskWeakRef = new WeakReference<>(asyncTask);
         asyncTask.execute(DATASET_COUNT);*/
     }
@@ -186,7 +187,7 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
             if (replyService == null) {
                 buildService();
                 try {
-                    //buildTestReplyInfo(accountName);
+                    buildTestReplyInfo(accountName);
                     ReplyInfoCollection replyInfoCollection = replyService.get(accountName).execute();
                     List<com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo> replyInfoList = replyInfoCollection.getItems();
                     System.out.println("Replylist: " + replyInfoList.toString());

@@ -31,6 +31,7 @@ public class ViewReplyActivity extends Activity {
     protected static final int CAPTURE_IMAGE_REQUEST_CODE = 1;
     private File file;
     private String gcmId;
+    private String accountName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,7 @@ public class ViewReplyActivity extends Activity {
         setBackgroundPicture();
         setImageFileDir();
         Button button = (Button) findViewById(R.id.replyButton);
+        accountName = (String) getIntent().getExtras().getCharSequence("accountName");
         button.getBackground().setAlpha(160);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,7 +73,7 @@ public class ViewReplyActivity extends Activity {
             Intent intent = new Intent(this, MainActivity.class);
             // send to server so that new list in RecyclerViewFragment
             // displays "Waiting for reply"
-            new SendReplyAsyncTask(this).execute(file.getAbsolutePath(), gcmId);
+            new SendReplyAsyncTask(this).execute(file.getAbsolutePath(), accountName);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);

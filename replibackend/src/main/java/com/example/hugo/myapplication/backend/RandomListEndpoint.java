@@ -48,19 +48,13 @@ public class RandomListEndpoint {
     private Objectify objectify;
     private static final int DEFAULT_LIST_LIMIT = 20;
 
-    static {
-        // Typically you would register this inside an OfyServive wrapper. See: https://code.google.com/p/objectify-appengine/wiki/BestPractices
-        ObjectifyService.register(RandomList.class);
-    }
-
-
     // TODO Change the returned url when deploying
     @ApiMethod(name = "getUploadUrl")
     public RandomList getUploadUrl(@Named("accName") String accName) {
         BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
         String blobUploadUrl = blobstoreService.createUploadUrl("/blob/upload");
         System.out.println(blobUploadUrl);
-        blobUploadUrl = blobUploadUrl.replace("debian", "192.168.1.75");
+        blobUploadUrl = blobUploadUrl.replace("debian", AuthorizationConstants.LOCAL_IP);
         System.out.println(blobUploadUrl);
         logger.info("bloburl: " + blobUploadUrl);
         RandomList reply = new RandomList();

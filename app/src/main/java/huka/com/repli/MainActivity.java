@@ -39,8 +39,9 @@ public class MainActivity extends FragmentActivity {
         SlidingTabLayout slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         // Customize the SlidingTabLayout
         slidingTabLayout.setDistributeEvenly(true);
-        slidingTabLayout.setBackgroundColor(getResources().getColor(R.color.primary));
-        slidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.white));
+        slidingTabLayout.setBackgroundColor(getResources().getColor(R.color.white));
+        slidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.primary));
+
         slidingTabLayout.setViewPager(viewPager);
         setPrimaryFragment();
     }
