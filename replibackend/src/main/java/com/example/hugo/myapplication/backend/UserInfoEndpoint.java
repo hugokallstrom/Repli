@@ -95,7 +95,7 @@ public class UserInfoEndpoint {
     public UserInfo getUploadUrl() {
         BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
         String blobUploadUrl = blobstoreService.createUploadUrl("/blob/upload");
-        blobUploadUrl = blobUploadUrl.replace("debian", AuthorizationConstants.LOCAL_IP);
+        blobUploadUrl = blobUploadUrl.replace("Maria-Dator", AuthorizationConstants.LOCAL_IP);
         logger.info("bloburl: " + blobUploadUrl);
         UserInfo userInfo = new UserInfo();
         userInfo.setProfilePictureUrl(blobUploadUrl);

@@ -85,9 +85,16 @@ public class UploadPicToRandomAsyncTask extends AsyncTask<File, Void, String>  {
         JSONObject jsonObject = new JSONObject(EntityUtils.toString(response.getEntity()));
         String profilePictureUrl = jsonObject.getString("servingUrl");
         String accountName = getAccountName();
-        System.out.println("Adding picture! " + profilePictureUrl);
-        RandomList randomList = regService.addPicture("kalle", "linyx3@gmail.com").execute();
+
+        String[] parts = profilePictureUrl.split("/_ah/img/");
+      //  String part1 = parts[0];
+        String blobKey = parts[1];
+        System.out.println("Adding picture! " + profilePictureUrl + "BLOBKEY " + blobKey        );
+        RandomList randomList = regService.addPicture(blobKey, accountName).execute();
         RandomList randomList2 = regService.addPicture("kalle", "linyx5@gmail.com").execute();
+        RandomList randomList3 = regService.addPicture("kalle", "linyx6@gmail.com").execute();
+        RandomList randomList4 = regService.addPicture("kalle", "linyx7@gmail.com").execute();
+        RandomList randomList5 = regService.addPicture("kalle", "linyx8@gmail.com").execute();
         System.out.println("profpic: " + profilePictureUrl + " accName;: " + accountName);
         String url = (String) randomList.getPictures().get(getAccountName());
         System.out.println("URL: " + url);

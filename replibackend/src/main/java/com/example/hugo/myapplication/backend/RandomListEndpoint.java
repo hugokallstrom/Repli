@@ -1,5 +1,8 @@
 package com.example.hugo.myapplication.backend;
 
+
+import com.google.android.gcm.server.Message;
+import com.google.android.gcm.server.Sender;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
@@ -13,8 +16,10 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.cmd.Query;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
@@ -47,6 +52,7 @@ public class RandomListEndpoint {
     private static final Logger logger = Logger.getLogger(RandomListEndpoint.class.getName());
     private Objectify objectify;
     private static final int DEFAULT_LIST_LIMIT = 20;
+    private static final String API_KEY = System.getProperty("gcm.api.key");
 
     // TODO Change the returned url when deploying
     @ApiMethod(name = "getUploadUrl")
@@ -54,7 +60,7 @@ public class RandomListEndpoint {
         BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
         String blobUploadUrl = blobstoreService.createUploadUrl("/blob/upload");
         System.out.println(blobUploadUrl);
-        blobUploadUrl = blobUploadUrl.replace("debian", AuthorizationConstants.LOCAL_IP);
+        blobUploadUrl = blobUploadUrl.replace("Maria-Dator", AuthorizationConstants.LOCAL_IP);
         System.out.println(blobUploadUrl);
         logger.info("bloburl: " + blobUploadUrl);
         RandomList reply = new RandomList();
@@ -69,16 +75,19 @@ public class RandomListEndpoint {
         System.out.println(replys.getItems().size());
         RandomList rep = new RandomList();
         if(replys.getItems().size() > 0 ){
-            System.out.println("size of replylist > 0");
+            System.out.println("size of replylist > " + replys.getItems().size());
             for (RandomList randomList : replys.getItems()) {
                 if(randomList.getPictures().size() < 4){
                     System.out.println("Set rep = reply");
                     rep = randomList;
                     break;
                 }
+                if(randomList.getPictures().size() == 4){
+                    sendOutPictures(randomList);
+                    System.out.println(accountName + " is 4!");
+                }
             }
         }
-
         rep.setPictures(accountName, pictureUrl);
         objectify = OfyService.ofy();
         objectify.save().entity(rep).now();
@@ -87,7 +96,26 @@ public class RandomListEndpoint {
     }
 
 
-
+    public void sendOutPictures(RandomList sendOut){
+        System.out.println("Send out pictures");
+        for(String accName : sendOut.getPictures().keySet()){
+            System.out.println(accName);
+            UserInfo userinfo = ofy().load().type(UserInfo.class).filter("accountName", accName).first().now();
+            if(userinfo != null){
+                System.out.println(userinfo.getGcmId());
+                Sender sender = new Sender(API_KEY);
+                Message msg = new Message.Builder().addData("message", sendOut.getPictures().get(accName)).build();
+                try {
+                    sender.send(msg, userinfo.getGcmId(), 5);
+                } catch (IOException e) {
+                    System.out.println("Exception sending to device!");
+                }
+            }
+            else{
+                System.out.println(accName + " is not in db userList");
+            }
+        }
+    }
     /**
      * List all entities.
      *
