@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import de.hdodenhof.circleimageview.CircleImageView;
 import huka.com.repli.R;
 import huka.com.repli.ReplyInfo;
+import servercalls.RemoveReplyAsyncTask;
 
 /**
  * Adapter for ReplyFragment.
@@ -127,6 +128,7 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
     }
 
     public void removeItem(int position) {
+        new RemoveReplyAsyncTask().execute(mDataSet.get(position));
         mDataSet.remove(position);
         notifyItemRemoved(position);
     }

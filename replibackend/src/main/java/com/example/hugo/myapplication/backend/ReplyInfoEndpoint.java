@@ -87,10 +87,9 @@ public class ReplyInfoEndpoint {
     }
 
     private ReplyInfo conversationExists(String myAccountName, String receiverAccountName) {
-        ReplyInfo replyInfo = objectify.load().type(ReplyInfo.class)
+        return objectify.load().type(ReplyInfo.class)
                 .filter("myAccountName", myAccountName)
                 .filter("accountName", receiverAccountName).first().now();
-        return replyInfo;
     }
 
     @ApiMethod(name = "replied")

@@ -23,11 +23,14 @@ public class RemoveReplyAsyncTask extends AsyncTask<ReplyInfo, Void, Void> {
 
     @Override
     protected Void doInBackground(ReplyInfo... params) {
-        try {
-            ReplyInfo replyInfo = params[0];
-            replyService.remove(LoginActivity.accountName, replyInfo.getUsername()).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (replyService == null) {
+            buildService();
+            try {
+                ReplyInfo replyInfo = params[0];
+                replyService.remove(LoginActivity.accountName, replyInfo.getUsername()).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return null;
