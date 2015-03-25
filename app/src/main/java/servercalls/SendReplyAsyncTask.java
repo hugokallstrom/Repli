@@ -70,7 +70,7 @@ public class SendReplyAsyncTask extends AsyncTask<String, Void, String>  {
 
     private ReplyInfo buildReplyInfo(UserInfo userInfo, String pictureUrl) {
         ReplyInfo replyInfo = new ReplyInfo();
-        replyInfo.setMyAccountName(receiverAccountName);
+        replyInfo.setMyAccountName("linus.oberg@gmail.com");
         replyInfo.setAccountName(userInfo.getAccountName());
         replyInfo.setGcmId(userInfo.getGcmId());
         replyInfo.setProfilePictureUrl(userInfo.getProfilePictureUrl());
@@ -83,7 +83,7 @@ public class SendReplyAsyncTask extends AsyncTask<String, Void, String>  {
     private String getDate() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date date = new Date();
-        System.out.println(dateFormat.format(date)); //2014/08/06 15:59:48
+        System.out.println(dateFormat.format(date));
         return dateFormat.format(date);
     }
 

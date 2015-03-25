@@ -49,10 +49,10 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
  )
 public class RandomListEndpoint {
 
+    private static final String API_KEY = "AIzaSyAAUv20Lcb7KqThX8g-3hmnhi66qUMvaTg";
     private static final Logger logger = Logger.getLogger(RandomListEndpoint.class.getName());
     private Objectify objectify;
     private static final int DEFAULT_LIST_LIMIT = 20;
-    private static final String API_KEY = System.getProperty("gcm.api.key");
 
     // TODO Change the returned url when deploying
     @ApiMethod(name = "getUploadUrl")
@@ -60,7 +60,7 @@ public class RandomListEndpoint {
         BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
         String blobUploadUrl = blobstoreService.createUploadUrl("/blob/upload");
         System.out.println(blobUploadUrl);
-        blobUploadUrl = blobUploadUrl.replace("Maria-Dator", AuthorizationConstants.LOCAL_IP);
+        blobUploadUrl = blobUploadUrl.replace(AuthorizationConstants.COMPUTER_NAME, AuthorizationConstants.LOCAL_IP);
         System.out.println(blobUploadUrl);
         logger.info("bloburl: " + blobUploadUrl);
         RandomList reply = new RandomList();

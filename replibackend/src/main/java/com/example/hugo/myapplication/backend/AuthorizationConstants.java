@@ -10,4 +10,5 @@ public class AuthorizationConstants {
     public static final String ANDROID_AUDIENCE = WEB_CLIENT_ID;
     public static final String EMAIL_SCOPE = "https://www.googleapis.com/auth/userinfo.email";
     public static final String LOCAL_IP = "130.239.220.166";
+    public static final String COMPUTER_NAME = "debian";
 }

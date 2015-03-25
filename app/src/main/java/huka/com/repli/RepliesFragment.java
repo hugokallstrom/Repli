@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adapters.MyRecyclerReplyAdapter;
+import servercalls.RemoveReplyAsyncTask;
 
 public class RepliesFragment extends android.support.v4.app.Fragment {
 
@@ -110,7 +111,7 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
             }
 
             @Override
-            public boolean onItemLongClicked(int position) {
+            public boolean onItemLongClicked(final int position) {
                 final int itemPosition = position;
                 AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(getActivity());
                 dlgAlert.setTitle("Remove Conversation");
@@ -119,6 +120,7 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mAdapter.removeItem(itemPosition);
+                        new RemoveReplyAsyncTask().execute(mDataset.get(position));
                     }
                 });
                 dlgAlert.setNegativeButton("Cancel",
@@ -201,13 +203,14 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
                         String url = replyInfo.getPictureUrl();
                         String profileUrl = replyInfo.getProfilePictureUrl();
                         if(url.contains("0.0.0.0") || profileUrl.contains("0.0.0.0")) {
-                            url = url.replace("0.0.0.0", "130.239.220.166");
-                            profileUrl = profileUrl.replace("0.0.0.0", "130.239.220.166");
+                            url = url.replace("0.0.0.0", "130.239.124.241");
+                            profileUrl = profileUrl.replace("0.0.0.0", "130.239.124.241");
                         }
+
                         System.out.println(url);
                         Bitmap picture = getBitmapFromURL(url);
-                        Bitmap thumbImage = ThumbnailUtils.extractThumbnail(picture, bitmapDecoder.getScreenWidth(), 200);
-                        Bitmap blurredThumbImage = BitmapDecoder.blurBitmap(thumbImage, getActivity());
+                        Bitmap blurredThumbImage = ThumbnailUtils.extractThumbnail(picture, bitmapDecoder.getScreenWidth(), 200);
+                        //Bitmap blurredThumbImage = BitmapDecoder.blurBitmap(thumbImage, getActivity());
 
                         if(!replyInfo.getReplied()) {
                             replyInfoDataSet.setThumbnail(BitmapDecoder.makeBlackAndWhite(blurredThumbImage));

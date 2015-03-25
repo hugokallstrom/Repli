@@ -35,7 +35,6 @@ public class GcmIntentService extends IntentService {
 
                 String accountName = intent.getStringExtra("accountName");
                 Logger.getLogger("accountname received").log(Level.INFO, accountName);
-
             }
         }
         GcmBroadcastReceiver.completeWakefulIntent(intent);
