@@ -198,8 +198,14 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
                         replyInfoDataSet.setDate(replyInfo.getTimeStamp());
                         replyInfoDataSet.setReplied(replyInfo.getReplied());
 
-                        System.out.println(replyInfo.getPictureUrl());
-                        Bitmap picture = getBitmapFromURL(replyInfo.getPictureUrl());
+                        String url = replyInfo.getPictureUrl();
+                        String profileUrl = replyInfo.getProfilePictureUrl();
+                        if(url.contains("0.0.0.0") || profileUrl.contains("0.0.0.0")) {
+                            url = url.replace("0.0.0.0", "130.239.220.166");
+                            profileUrl = profileUrl.replace("0.0.0.0", "130.239.220.166");
+                        }
+                        System.out.println(url);
+                        Bitmap picture = getBitmapFromURL(url);
                         Bitmap thumbImage = ThumbnailUtils.extractThumbnail(picture, bitmapDecoder.getScreenWidth(), 200);
                         Bitmap blurredThumbImage = BitmapDecoder.blurBitmap(thumbImage, getActivity());
 
@@ -211,7 +217,7 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
 
                         replyInfoDataSet.setImage(picture);
                         System.out.println(replyInfo.getProfilePictureUrl());
-                        Bitmap profilePicture = getBitmapFromURL(replyInfo.getProfilePictureUrl());
+                        Bitmap profilePicture = getBitmapFromURL(profileUrl);
                         replyInfoDataSet.setProfilePicture(profilePicture);
                         mDataset.add(replyInfoDataSet);
                     }
@@ -225,16 +231,6 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
 
         private void buildTestReplyInfo(String accountName) {
             try {
-                com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo replyInfo = new com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo();
-                replyInfo.setMyAccountName(accountName);
-                replyInfo.setAccountName("linus@gmail.com");
-                replyInfo.setGcmId("1231531123");
-                replyInfo.setTimeStamp("2015-03-21 12:23");
-                replyInfo.setProfilePictureUrl("http://www.uidaho.edu/~/media/Images/orgs/enrollment-mgmt/Admissions/2012/cezar-admissions-profile.ashx");
-                replyInfo.setPictureUrl("http://wanderingdanny.com/oxford/images/p/b4242667-wytham-woods-avenue.jpg");
-                replyInfo.setReplied(false);
-                replyService.insert(replyInfo).execute();
-
                 com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo replyInfo2 = new com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo();
                 replyInfo2.setMyAccountName(accountName);
                 replyInfo2.setAccountName("apan@gmail.com");

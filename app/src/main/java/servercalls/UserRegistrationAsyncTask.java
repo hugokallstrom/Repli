@@ -90,7 +90,7 @@ public class UserRegistrationAsyncTask extends AsyncTask<String, Void, Boolean> 
         userInfo.setGcmId(gcmId);
         userInfo.setAccountName(params[0]);
         userInfo.setEmail(params[0]);
-        userInfo.setProfilePictureUrl(null);
+        userInfo.setProfilePictureUrl("http://upload.wikimedia.org/wikipedia/commons/1/13/Daniel_Ingram_Profile.png");
         return userInfo;
     }
 

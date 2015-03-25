@@ -30,7 +30,6 @@ public class ViewReplyActivity extends Activity {
 
     protected static final int CAPTURE_IMAGE_REQUEST_CODE = 1;
     private File file;
-    private String gcmId;
     private String accountName;
 
     @Override

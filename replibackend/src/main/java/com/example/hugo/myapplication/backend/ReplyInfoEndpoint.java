@@ -80,6 +80,18 @@ public class ReplyInfoEndpoint {
         return ofy().load().entity(replyInfo).now();
     }
 
+    @ApiMethod(name = "replied")
+    public ReplyInfo update(@Named("accountName") String myAccountName, @Named("receiverAccountName") String receiverAccountName) {
+        objectify = OfyService.ofy();
+        ReplyInfo replyInfo = objectify.load().type(ReplyInfo.class)
+                .filter("myAccountName", myAccountName)
+                .filter("accountName", receiverAccountName).first().now();
+        replyInfo.setReplied(false);
+        objectify.save().entity(replyInfo).now();
+        logger.info("set replied false for: " + replyInfo.getAccountName());
+        return replyInfo;
+    }
+
     /**
      * Deletes the specified {@code ReplyInfo}.
      *

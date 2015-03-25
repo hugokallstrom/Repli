@@ -60,22 +60,6 @@ public class UploadProfilePicAsyncTask extends  AsyncTask<File, Void, String> {
         return url;
     }
 
-    private HttpResponse uploadImage(String profilePictureUrl, File imageFile) throws IOException {
-        HttpClient httpclient = new DefaultHttpClient();
-        System.out.printf("url ::: " + profilePictureUrl);
-        HttpPost httppost = new HttpPost(profilePictureUrl);
-        FileBody fileBody  = new FileBody(imageFile.getAbsoluteFile());
-        MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-        reqEntity.addPart("file", fileBody);
-        httppost.setEntity(reqEntity);
-
-        System.out.println("executing request " + httppost.getRequestLine());
-        HttpResponse response = httpclient.execute(httppost);
-        httpclient.getConnectionManager().shutdown();
-        return response;
-    }
-
     private String saveProfilePicToDB(HttpResponse response) throws JSONException, IOException {
         JSONObject jsonObject = new JSONObject(EntityUtils.toString(response.getEntity()));
         String profilePictureUrl = jsonObject.getString("servingUrl");
