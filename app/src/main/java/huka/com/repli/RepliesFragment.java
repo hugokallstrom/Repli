@@ -187,22 +187,6 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
             return null;
         }
 
-        private void buildTestReplyInfo(String accountName) {
-            try {
-                com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo replyInfo2 = new com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo();
-                replyInfo2.setMyAccountName(accountName);
-                replyInfo2.setAccountName("apan@gmail.com");
-                replyInfo2.setGcmId("1209023");
-                replyInfo2.setProfilePictureUrl("http://www.american.edu/uploads/profiles/large/chris_palmer_profile_11.jpg");
-                replyInfo2.setPictureUrl("http://www.nature.org/cs/groups/webcontent/@web/@texas/documents/media/prd_011155.jpg");
-                replyInfo2.setReplied(true);
-                replyInfo2.setTimeStamp("2015-02-12 11:53");
-                replyService.insert(replyInfo2).execute();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         @Override
         protected void onPostExecute(Void response) {
             super.onPostExecute(response);

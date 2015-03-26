@@ -82,7 +82,7 @@ public class ReplyInfoEndpoint {
         try {
             objectify = OfyService.ofy();
             ReplyInfo tempReplyInfo;
-            tempReplyInfo = conversationExists(replyInfo.getAccountName(), replyInfo.getMyAccountName());
+            tempReplyInfo = conversationExists(replyInfo.getMyAccountName(), replyInfo.getAccountName());
 
             if(tempReplyInfo != null) {
                 logger.info("Conv exists");

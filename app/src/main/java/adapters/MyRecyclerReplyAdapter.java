@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,9 +115,8 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         ReplyInfo replyInfo = mDataSet.get(position);
         int bordercolor;
-        // Build the view
-       // new GetImageAsyncTask(viewHolder).execute(replyInfo.getProfilePicture(), replyInfo.getImage());
-
+        new DownloadImageTask(viewHolder.getThumbnailView()).execute(replyInfo.getImage());
+        new DownloadImageTask(viewHolder.getProfilePictureView()).execute(replyInfo.getProfilePicture());
         viewHolder.getUsernameText().setText(replyInfo.getUsername());
         viewHolder.getDateTxt().setText(replyInfo.getDate());
         viewHolder.getThumbnailView().setColorFilter(R.color.primary);
@@ -126,6 +126,7 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
         } else {
             bordercolor = viewHolder.getActiveColor();
         }
+
         viewHolder.getProfilePictureView().setBorderColor(bordercolor);
     }
 
@@ -145,39 +146,28 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
         notifyDataSetChanged();
     }
 
-    private class GetImageAsyncTask extends AsyncTask<String, Void, Void> {
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
 
-        private ViewHolder viewHolder;
-
-        public GetImageAsyncTask(ViewHolder viewHolder) {
-            this.viewHolder = viewHolder;
-        }
-        @Override
-        protected Void doInBackground(String... params) {
-            String profilePictureUrl = params[0];
-            String thumbNailUrl = params[1];
-            Bitmap profilePicture = getBitmapFromURL(profilePictureUrl);
-            Bitmap thumbNail = getBitmapFromURL(thumbNailUrl);
-
-            viewHolder.getThumbnailView().setImageBitmap(thumbNail);
-            viewHolder.getProfilePictureView().setImageBitmap(profilePicture);
-            return null;
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
         }
 
-        public Bitmap getBitmapFromURL(String src) {
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
             try {
-                URL url = new URL(src);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setDoInput(true);
-                connection.connect();
-                InputStream input = connection.getInputStream();
-                Bitmap myBitmap = BitmapFactory.decodeStream(input);
-                myBitmap.getHeight();
-                return myBitmap;
-            } catch (IOException e) {
-                // Log exception
-                return null;
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
             }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
         }
     }
 }

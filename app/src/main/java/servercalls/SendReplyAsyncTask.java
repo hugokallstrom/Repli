@@ -49,9 +49,11 @@ public class SendReplyAsyncTask extends AsyncTask<String, Void, String>  {
             replyService = ServiceBuilder.buildReplyInfoService();
             try {
                 String pictureUrl = getPictureUrl();
-                UserInfo userInfo = userService.getUser(LoginActivity.accountName).execute();
-                System.out.println("User info accname: " + userInfo.getAccountName());
-                ReplyInfo replyInfo = buildReplyInfo(userInfo, pictureUrl);
+                UserInfo userInfoSender = userService.getUser(LoginActivity.accountName).execute();
+                UserInfo userInfoReceiver = userService.getUser(receiverAccountName).execute();
+                // set gcmId to receivers gcmId
+                userInfoSender.setGcmId(userInfoReceiver.getGcmId());
+                ReplyInfo replyInfo = buildReplyInfo(userInfoSender, pictureUrl);
                 replyService.insert(replyInfo).execute();
                 replyService.replied(LoginActivity.accountName, receiverAccountName).execute();
             } catch (IOException e) {
