@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 
+import huka.com.repli.BitmapDecoder;
 import huka.com.repli.R;
 import huka.com.repli.ReplyInfo;
 
@@ -73,7 +74,8 @@ public class MyRecyclerCameraAdapter extends RecyclerView.Adapter<MyRecyclerCame
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        Bitmap image = mDataSet.get(position).getThumbnail();
+        String imageUrl = mDataSet.get(position).getThumbnail();
+        Bitmap image = BitmapDecoder.getBitmapFromURL(imageUrl);
         viewHolder.getRandomImage().setImageBitmap(image);
     }
 

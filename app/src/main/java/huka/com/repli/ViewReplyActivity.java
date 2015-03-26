@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.InputStream;
 
 import servercalls.SendReplyAsyncTask;
 import servercalls.UploadProfilePicAsyncTask;
@@ -31,11 +34,13 @@ public class ViewReplyActivity extends Activity {
     protected static final int CAPTURE_IMAGE_REQUEST_CODE = 1;
     private File file;
     private String accountName;
+    private ImageView image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_reply);
+        image = (ImageView) findViewById(R.id.replyFullImageView);
         this.getActionBar().hide();
         setBackgroundPicture();
         setImageFileDir();
@@ -54,11 +59,8 @@ public class ViewReplyActivity extends Activity {
 
     private void setBackgroundPicture() {
         Bundle extras = getIntent().getExtras();
-        byte[] b = extras.getByteArray("picture");
-
-        Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
-        ImageView image = (ImageView) findViewById(R.id.replyFullImageView);
-        image.setImageBitmap(bmp);
+        String pictureUrl = extras.getString("picture");
+        new DownloadImageTask(image).execute(pictureUrl);
     }
 
     private void setImageFileDir() {
@@ -70,8 +72,6 @@ public class ViewReplyActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1 && resultCode != 0) {
             Intent intent = new Intent(this, MainActivity.class);
-            // send to server so that new list in RecyclerViewFragment
-            // displays "Waiting for reply"
             new SendReplyAsyncTask(this).execute(file.getAbsolutePath(), accountName);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -79,5 +79,30 @@ public class ViewReplyActivity extends Activity {
             startActivity(intent);
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
     }
 }

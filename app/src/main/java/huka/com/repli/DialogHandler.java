@@ -16,7 +16,7 @@ public class DialogHandler {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        SharedPreferences settings = context.getSharedPreferences("RepliAccount", 0);
+                        SharedPreferences settings = context.getSharedPreferences(context.getString(R.string.app_name), 0);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(LoginActivity.PREF_ACCOUNT_NAME, "");
                         editor.commit();

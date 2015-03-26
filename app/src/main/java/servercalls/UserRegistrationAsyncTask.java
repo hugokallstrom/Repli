@@ -1,5 +1,6 @@
 package servercalls;
 
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,15 +13,6 @@ import com.example.hugo.myapplication.backend.userInfoApi.model.UserInfo;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
-import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -29,7 +21,6 @@ import java.util.logging.Logger;
 import huka.com.repli.LoginActivity;
 import huka.com.repli.MainActivity;
 import huka.com.repli.R;
-import huka.com.repli.UserInfoActivity;
 
 public class UserRegistrationAsyncTask extends AsyncTask<String, Void, Boolean> {
     private static UserInfoApi regService = null;
@@ -43,7 +34,7 @@ public class UserRegistrationAsyncTask extends AsyncTask<String, Void, Boolean> 
 
     @Override
     protected Boolean doInBackground(String... params) {
-        buildService();
+        regService = ServiceBuilder.buildUserInfoService();
         if (!isRegistered(params[0])) {
             String gcmId = registerToGcm();
             UserInfo userInfo = buildUserInfo(gcmId, params);
@@ -67,22 +58,6 @@ public class UserRegistrationAsyncTask extends AsyncTask<String, Void, Boolean> 
         }
         Log.v("register", "found");
         return true;
-    }
-
-    private void buildService() {
-        UserInfoApi.Builder builder = new UserInfoApi.Builder(AndroidHttp.newCompatibleTransport(),
-                new AndroidJsonFactory(), null) //.setRootUrl("https://repliapp.appspot.com/_ah/api/");
-                // Need setRootUrl and setGoogleClientRequestInitializer only for local testing,
-                // otherwise they can be skipped
-                .setRootUrl(LoginActivity.LOCALHOST_IP)
-                .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-                    @Override
-                    public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest)
-                            throws IOException {
-                        abstractGoogleClientRequest.setDisableGZipContent(true);
-                    }
-                });
-        regService = builder.build();
     }
 
     private UserInfo buildUserInfo(String gcmId, String... params) {
@@ -124,7 +99,7 @@ public class UserRegistrationAsyncTask extends AsyncTask<String, Void, Boolean> 
 
     private void saveUsername(String[] params) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
-        sharedPreferences.edit().putString("USERNAME", params[0]).apply();
+        sharedPreferences.edit().putString(LoginActivity.PREF_ACCOUNT_NAME, params[0]).apply();
     }
 
     @Override

@@ -1,6 +1,9 @@
 package adapters;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -108,10 +115,11 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
         ReplyInfo replyInfo = mDataSet.get(position);
         int bordercolor;
         // Build the view
+       // new GetImageAsyncTask(viewHolder).execute(replyInfo.getProfilePicture(), replyInfo.getImage());
+
         viewHolder.getUsernameText().setText(replyInfo.getUsername());
         viewHolder.getDateTxt().setText(replyInfo.getDate());
-        viewHolder.getThumbnailView().setBackground(new BitmapDrawable(replyInfo.getThumbnail()));
-        viewHolder.getProfilePictureView().setImageBitmap(replyInfo.getProfilePicture());
+        viewHolder.getThumbnailView().setColorFilter(R.color.primary);
 
         if(!replyInfo.isReplied()) {
             bordercolor = viewHolder.getInactiveColor();
@@ -120,7 +128,6 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
         }
         viewHolder.getProfilePictureView().setBorderColor(bordercolor);
     }
-
 
     @Override
     public int getItemCount() {
@@ -136,6 +143,42 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
     public void setDataSet(ArrayList<ReplyInfo> newDataSet){
         mDataSet = newDataSet;
         notifyDataSetChanged();
+    }
+
+    private class GetImageAsyncTask extends AsyncTask<String, Void, Void> {
+
+        private ViewHolder viewHolder;
+
+        public GetImageAsyncTask(ViewHolder viewHolder) {
+            this.viewHolder = viewHolder;
+        }
+        @Override
+        protected Void doInBackground(String... params) {
+            String profilePictureUrl = params[0];
+            String thumbNailUrl = params[1];
+            Bitmap profilePicture = getBitmapFromURL(profilePictureUrl);
+            Bitmap thumbNail = getBitmapFromURL(thumbNailUrl);
+
+            viewHolder.getThumbnailView().setImageBitmap(thumbNail);
+            viewHolder.getProfilePictureView().setImageBitmap(profilePicture);
+            return null;
+        }
+
+        public Bitmap getBitmapFromURL(String src) {
+            try {
+                URL url = new URL(src);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                Bitmap myBitmap = BitmapFactory.decodeStream(input);
+                myBitmap.getHeight();
+                return myBitmap;
+            } catch (IOException e) {
+                // Log exception
+                return null;
+            }
+        }
     }
 }
 

@@ -3,29 +3,14 @@ package com.example.hugo.myapplication.backend;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
-import com.google.api.server.spi.response.CollectionResponse;
 import com.google.api.server.spi.response.NotFoundException;
-import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
-import com.google.appengine.api.datastore.Blob;
-import com.google.appengine.api.datastore.Cursor;
-import com.google.appengine.api.datastore.QueryResultIterator;
-import com.google.appengine.api.images.ImagesService;
-import com.google.appengine.api.images.ImagesServiceFactory;
-import com.google.appengine.api.images.ServingUrlOptions;
-import com.google.appengine.api.oauth.OAuthRequestException;
-import com.google.appengine.api.users.User;
 import com.googlecode.objectify.Objectify;
-import com.googlecode.objectify.ObjectifyService;
-import com.googlecode.objectify.cmd.Query;
 
-import java.util.ArrayList;
 import java.util.InvalidPropertiesFormatException;
-import java.util.List;
 import java.util.logging.Logger;
 
-import javax.annotation.Nullable;
 import javax.inject.Named;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
@@ -95,7 +80,7 @@ public class UserInfoEndpoint {
     public UserInfo getUploadUrl() {
         BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
         String blobUploadUrl = blobstoreService.createUploadUrl("/blob/upload");
-        blobUploadUrl = blobUploadUrl.replace("Maria-Dator", AuthorizationConstants.LOCAL_IP);
+        //blobUploadUrl = blobUploadUrl.replace(AuthorizationConstants.COMPUTER_NAME, AuthorizationConstants.LOCAL_IP);
         logger.info("bloburl: " + blobUploadUrl);
         UserInfo userInfo = new UserInfo();
         userInfo.setProfilePictureUrl(blobUploadUrl);

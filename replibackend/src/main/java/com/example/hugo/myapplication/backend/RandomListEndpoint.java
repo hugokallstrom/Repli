@@ -46,7 +46,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
                 ownerName = "backend.myapplication.hugo.example.com",
                 packagePath = ""
         )
- )
+)
 public class RandomListEndpoint {
 
     private static final Logger logger = Logger.getLogger(RandomListEndpoint.class.getName());

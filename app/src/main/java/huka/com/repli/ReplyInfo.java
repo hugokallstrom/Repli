@@ -11,9 +11,9 @@ public class ReplyInfo {
     private String username;
     private String date;
     private boolean replied;
-    private Bitmap profilePicture;
-    private Bitmap thumbnail;
-    private Bitmap image;
+    private String profilePicture;
+    private String thumbnail;
+    private String image;
 
     public ReplyInfo(String username) {
         this.username = username;
@@ -39,27 +39,27 @@ public class ReplyInfo {
         this.replied = replied;
     }
 
-    public Bitmap getProfilePicture() {
+    public String getProfilePicture() {
         return profilePicture;
     }
 
-    public void setProfilePicture(Bitmap profilePicture) {
+    public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;
     }
 
-    public Bitmap getThumbnail() {
+    public String getThumbnail() {
         return thumbnail;
     }
 
-    public void setThumbnail(Bitmap thumbnail) {
+    public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
     }
 
-    public Bitmap getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(Bitmap image) {
+    public void setImage(String image) {
         this.image = image;
     }
 }

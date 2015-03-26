@@ -45,7 +45,8 @@ public class SendReplyAsyncTask extends AsyncTask<String, Void, String>  {
         imagePath = params[0];
         receiverAccountName = params[1];
         if (userService == null) {
-            buildService();
+            userService = ServiceBuilder.buildUserInfoService();
+            replyService = ServiceBuilder.buildReplyInfoService();
             try {
                 String pictureUrl = getPictureUrl();
                 UserInfo userInfo = userService.getUser(LoginActivity.accountName).execute();
@@ -85,36 +86,6 @@ public class SendReplyAsyncTask extends AsyncTask<String, Void, String>  {
         Date date = new Date();
         System.out.println(dateFormat.format(date));
         return dateFormat.format(date);
-    }
-
-    private void buildService() {
-        UserInfoApi.Builder builder = new UserInfoApi.Builder(AndroidHttp.newCompatibleTransport(),
-                new AndroidJsonFactory(), null) //.setRootUrl("https://repliapp.appspot.com/_ah/api/");
-                // Need setRootUrl and setGoogleClientRequestInitializer only for local testing,
-                // otherwise they can be skipped
-                .setRootUrl(LoginActivity.LOCALHOST_IP)
-                .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-                    @Override
-                    public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest)
-                            throws IOException {
-                        abstractGoogleClientRequest.setDisableGZipContent(true);
-                    }
-                });
-        userService = builder.build();
-
-        ReplyInfoApi.Builder builder2 = new ReplyInfoApi.Builder(AndroidHttp.newCompatibleTransport(),
-                new AndroidJsonFactory(), null) //.setRootUrl("https://repliapp.appspot.com/_ah/api/");
-                // Need setRootUrl and setGoogleClientRequestInitializer only for local testing,
-                // otherwise they can be skipped
-                .setRootUrl(LoginActivity.LOCALHOST_IP)
-                .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-                    @Override
-                    public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest)
-                            throws IOException {
-                        abstractGoogleClientRequest.setDisableGZipContent(true);
-                    }
-                });
-        replyService = builder2.build();
     }
 
     @Override

@@ -45,7 +45,7 @@ public class UploadProfilePicAsyncTask extends  AsyncTask<File, Void, String> {
         File imageFile = params[0];
         String url = "";
         if (regService == null) {
-            buildService();
+            regService = ServiceBuilder.buildUserInfoService();
             try {
                 UserInfo userInfo = regService.getUploadUrl().execute();
                 HttpResponse response = UploadImage.uploadImage(userInfo.getProfilePictureUrl(), imageFile);
@@ -77,22 +77,6 @@ public class UploadProfilePicAsyncTask extends  AsyncTask<File, Void, String> {
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
         String username = sharedPreferences.getString("USERNAME", "none");
         return username;
-    }
-
-    private void buildService() {
-        UserInfoApi.Builder builder = new UserInfoApi.Builder(AndroidHttp.newCompatibleTransport(),
-                new AndroidJsonFactory(), null) //.setRootUrl("https://repliapp.appspot.com/_ah/api/");
-                // Need setRootUrl and setGoogleClientRequestInitializer only for local testing,
-                // otherwise they can be skipped
-                .setRootUrl(LoginActivity.LOCALHOST_IP)
-                .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-                    @Override
-                    public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest)
-                            throws IOException {
-                        abstractGoogleClientRequest.setDisableGZipContent(true);
-                    }
-                });
-        regService = builder.build();
     }
 
     @Override

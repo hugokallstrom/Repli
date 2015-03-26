@@ -7,10 +7,6 @@ import android.widget.Toast;
 
 import com.example.hugo.myapplication.backend.randomListApi.RandomListApi;
 import com.example.hugo.myapplication.backend.randomListApi.model.RandomList;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
-import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -26,7 +22,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 
-import huka.com.repli.LoginActivity;
 import huka.com.repli.R;
 
 /**
@@ -35,7 +30,7 @@ import huka.com.repli.R;
 
 public class UploadPicToRandomAsyncTask extends AsyncTask<File, Void, String>  {
 
-    private static RandomListApi regService = null;
+    private static RandomListApi randomService = null;
     private Context context;
 
     public UploadPicToRandomAsyncTask(Context context) {
@@ -48,15 +43,15 @@ public class UploadPicToRandomAsyncTask extends AsyncTask<File, Void, String>  {
         String url = "";
         System.out.println("do back");
 
-        if (regService == null) {
+        if (randomService == null) {
             System.out.println("reg serv == null");
-            buildService();
+            randomService = ServiceBuilder.buildRandomListService();
         }else{
             System.out.println("reg serv != null");
         }
             try {
                 System.out.println("regserv");
-                RandomList replys = regService.getUploadUrl(getAccountName()).execute();
+                RandomList replys = randomService.getUploadUrl(getAccountName()).execute();
                 HttpResponse response = uploadImage((String) replys.getPictures().get(getAccountName()), imageFile);
                 url = saveToDB(response);
             } catch (IOException e) {
@@ -94,7 +89,7 @@ public class UploadPicToRandomAsyncTask extends AsyncTask<File, Void, String>  {
       //  String part1 = parts[0];
         String blobKey = parts[1];
         System.out.println("Adding picture! " + profilePictureUrl + "BLOBKEY " + blobKey        );
-        RandomList randomList = regService.addPicture(blobKey, accountName).execute();
+        RandomList randomList = randomService.addPicture(blobKey, accountName).execute();
         System.out.println("profpic: " + profilePictureUrl + " accName;: " + accountName);
         String url = (String) randomList.getPictures().get(getAccountName());
         System.out.println("URL: " + url);
@@ -105,22 +100,6 @@ public class UploadPicToRandomAsyncTask extends AsyncTask<File, Void, String>  {
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
         String username = sharedPreferences.getString("USERNAME", "none");
         return username;
-    }
-
-    private void buildService() {
-        RandomListApi.Builder builder = new RandomListApi.Builder(AndroidHttp.newCompatibleTransport(),
-                new AndroidJsonFactory(), null) //.setRootUrl("https://repliapp.appspot.com/_ah/api/");
-                // Need setRootUrl and setGoogleClientRequestInitializer only for local testing,
-                // otherwise they can be skipped
-                .setRootUrl(LoginActivity.LOCALHOST_IP)
-                .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-                    @Override
-                    public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest)
-                            throws IOException {
-                        abstractGoogleClientRequest.setDisableGZipContent(true);
-                    }
-                });
-        regService = builder.build();
     }
 
     @Override

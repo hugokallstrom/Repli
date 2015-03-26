@@ -21,9 +21,9 @@ import servercalls.UserRegistrationAsyncTask;
  */
 public class LoginActivity extends Activity {
 
-    public static final String LOCALHOST_IP = "http://192.168.1.73:8080/_ah/api/";
-    public static final String LOCALHOST_IP2 = "192.168.1.73";
-    public static final String PREF_ACCOUNT_NAME = "accountname";
+    public static final String LOCALHOST_IP = "http://192.168.1.71:8080/_ah/api/";
+    public static final String LOCALHOST_IP2 = "192.168.1.71";
+    public static final String PREF_ACCOUNT_NAME = "accountName";
     private static final int REQUEST_ACCOUNT_PICKER = 2;
     private static final String TAG = "LoginActivity";
     private SharedPreferences settings;
@@ -38,20 +38,17 @@ public class LoginActivity extends Activity {
     }
 
     private void checkCredentials() {
-        settings = getSharedPreferences("RepliAccount", 0);
+        settings = getSharedPreferences(getString(R.string.app_name), 0);
         credential = GoogleAccountCredential.usingAudience(this,
                 "815657678459-u8cauf778bpal3r0tefu7psrvui9tafl.apps.googleusercontent.com");
         setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
-        UserInfoApi.Builder builder = new UserInfoApi.Builder(AndroidHttp.newCompatibleTransport(),
-                                      new AndroidJsonFactory(), null).setRootUrl(LOCALHOST_IP);
-        UserInfoApi service = builder.build();
-
-        if (credential.getSelectedAccountName() != null) {
-            setSelectedAccountName(credential.getSelectedAccountName());
+        String accountName = settings.getString(PREF_ACCOUNT_NAME, null);
+        System.out.println("accname: " + accountName);
+        if (accountName != null && !accountName.equals("")) {
+            setSelectedAccountName(accountName);
+            LoginActivity.accountName = accountName;
             startMain();
             Log.v(TAG, "found credential, starting main");
-        } else {
-            chooseAccount();
         }
     }
 
@@ -76,7 +73,7 @@ public class LoginActivity extends Activity {
     }
 
     public void loginListener(View view) {
-        checkCredentials();
+        chooseAccount();
     }
 
     @Override

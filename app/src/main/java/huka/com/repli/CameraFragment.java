@@ -49,7 +49,6 @@ public class CameraFragment extends android.support.v4.app.Fragment {
 
     protected static final int CAPTURE_IMAGE_REQUEST_CODE = 1;
     private File file;
-    private Integer[] fullImages =  new Integer[] {R.drawable.test_image5, R.drawable.test_image3, R.drawable.test_image1};;
 
     public static CameraFragment newInstance() {
         return new CameraFragment();
@@ -91,16 +90,8 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1 && resultCode != 0) {
-            /* send to server in order to retrieve images
-               from other users and display in this fragment.
-               For now, display a place holder progressbar
-               and load three images from memory.
-      */
-//            System.out.println(data.getData());
             UploadPicToRandomAsyncTask asyncTask = new UploadPicToRandomAsyncTask(this.getActivity());
-          // WeakReference<MyAsyncTask> asyncTaskWeakRef = new WeakReference<>(asyncTask);
             asyncTask.execute(file);
-
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -115,12 +106,8 @@ public class CameraFragment extends android.support.v4.app.Fragment {
         mAdapter.SetOnItemClickListener(new MyRecyclerCameraAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                mDataset.get(position).getImage().compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                byte[] b = baos.toByteArray();
-
                 Intent intent = new Intent(getActivity(), ViewReplyActivity.class);
-                intent.putExtra("picture", b);
+                intent.putExtra("picture", mDataset.get(position).getImage());
                 intent.putExtra("accountName", mDataset.get(position).getUsername());
                 startActivityForResult(intent, 0);
             }
@@ -134,52 +121,23 @@ public class CameraFragment extends android.support.v4.app.Fragment {
 
     public class MyAsyncTask extends AsyncTask<String, Void, Void> {
 
-      //  private WeakReference<CameraFragment> fragmentWeakRef;
-
-        private MyAsyncTask () {
-           // this.fragmentWeakRef = new WeakReference<>(fragment);
-        }
-
-        private ProgressDialog progressDialog;
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-      //      progressDialog = ProgressDialog.show(getActivity(), "Wait", "Finding images around the world...");
         }
 
-        public Bitmap getBitmapFromURL(String src) {
-            try {
-                URL url = new URL(src);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setDoInput(true);
-                connection.connect();
-                InputStream input = connection.getInputStream();
-                Bitmap myBitmap = BitmapFactory.decodeStream(input);
-                myBitmap.getHeight();
-                return myBitmap;
-            } catch (IOException e) {
-                // Log exception
-                return null;
-            }
-        }
         @Override
         protected Void doInBackground(String... params) {
             System.out.println("myAsyncTask!");
             String url = params[0];
             String account = params[1];
 //            String url = "http://"+LoginActivity.LOCALHOST_IP2+":8080/_ah/img/"+blobKey;
-            Bitmap picture = getBitmapFromURL(url);
             mDataset.clear();
-                // Load and scale images
-                BitmapDecoder bitmapDecoder = new BitmapDecoder(getActivity());
+            ReplyInfo replyInfo = new ReplyInfo(account);
+            replyInfo.setImage(url);
+            replyInfo.setThumbnail(url);
 
-                Bitmap thumbImage = ThumbnailUtils.extractThumbnail(picture, bitmapDecoder.getScreenWidth(), 600);
-                ReplyInfo replyInfo = new ReplyInfo(account);
-                replyInfo.setImage(picture);
-                replyInfo.setThumbnail(thumbImage);
-
-                mDataset.add(replyInfo);
+            mDataset.add(replyInfo);
 
             return null;
         }
@@ -187,35 +145,25 @@ public class CameraFragment extends android.support.v4.app.Fragment {
         @Override
         protected void onPostExecute(Void response) {
             super.onPostExecute(response);
-//            progressDialog.dismiss();
-        //    if (this.fragmentWeakRef.get() != null) {
-                mAdapter.notifyDataSetChanged();
-        //    }
+            mAdapter.notifyDataSetChanged();
         }
     }
 
-
-    //register your activity onResume()
     @Override
     public void onResume() {
         super.onResume();
         this.getActivity().registerReceiver(mMessageReceiver, new IntentFilter("unique_name"));
     }
 
-    //Must unregister onPause()
     @Override
     public void onPause() {
         super.onPause();
         this.getActivity().unregisterReceiver(mMessageReceiver);
     }
 
-
-    //This is the handler that will manager to process the broadcast intent
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            // Extract data included in the Intent
             String message = intent.getStringExtra("message");
             String account = intent.getStringExtra("account");
             System.out.println("cameraFrag " + message);
