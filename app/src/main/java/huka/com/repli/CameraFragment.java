@@ -131,14 +131,10 @@ public class CameraFragment extends android.support.v4.app.Fragment {
             System.out.println("myAsyncTask!");
             String url = params[0];
             String account = params[1];
-//            String url = "http://"+LoginActivity.LOCALHOST_IP2+":8080/_ah/img/"+blobKey;
-            mDataset.clear();
             ReplyInfo replyInfo = new ReplyInfo(account);
             replyInfo.setImage(url);
             replyInfo.setThumbnail(url);
-
             mDataset.add(replyInfo);
-
             return null;
         }
 

@@ -51,7 +51,7 @@ public class RandomListEndpoint {
 
     private static final Logger logger = Logger.getLogger(RandomListEndpoint.class.getName());
     private Objectify objectify;
-    private static final int DEFAULT_LIST_LIMIT = 20;
+    private static final int LIST_LIMIT = 2;
     private static final String API_KEY = "AIzaSyAAUv20Lcb7KqThX8g-3hmnhi66qUMvaTg";
 
     // TODO Change the returned url when deploying
@@ -80,7 +80,7 @@ public class RandomListEndpoint {
 
             for (RandomList randomList : replys.getItems()) {
                 System.out.println("size of randomList " + randomList.getPictures().size());
-                if(randomList.getPictures().size() < 1){
+                if(randomList.getPictures().size() < LIST_LIMIT){
 
                     rep = randomList;
                     rep.setPictures(accountName, pictureUrl);
@@ -88,7 +88,7 @@ public class RandomListEndpoint {
                     objectify.save().entity(rep).now();
                     break;
                 }
-                if(randomList.getPictures().size() == 1){
+                if(randomList.getPictures().size() == LIST_LIMIT){
                     System.out.println(accountName + " is 1!");
                     rep = randomList;
                     rep.setPictures(accountName, pictureUrl);
@@ -98,7 +98,7 @@ public class RandomListEndpoint {
 
                     break;
                 }
-                if(randomList.getPictures().size() > 1){
+                if(randomList.getPictures().size() > LIST_LIMIT){
                     System.out.println(accountName + " > 1!");
                     rep.setPictures(accountName, pictureUrl);
                     objectify = OfyService.ofy();
@@ -154,7 +154,7 @@ public class RandomListEndpoint {
             path = "replyList",
             httpMethod = ApiMethod.HttpMethod.GET)
     public CollectionResponse<RandomList> list(@Nullable @Named("cursor") String cursor, @Nullable @Named("limit") Integer limit) {
-        limit = limit == null ? DEFAULT_LIST_LIMIT : limit;
+        limit = limit == null ? 20 : limit;
         Query<RandomList> query = ofy().load().type(RandomList.class).limit(limit);
         if (cursor != null) {
             query = query.startAt(Cursor.fromWebSafeString(cursor));

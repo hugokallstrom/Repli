@@ -14,16 +14,18 @@
         android:id="@+id/replyFullImageView"
         android:layout_centerHorizontal="true"
         android:adjustViewBounds="true"
-        android:scaleType="fitXY"/>
+        android:scaleType="centerCrop"/>
 
     <Button
-        android:layout_width="match_parent"
+        android:layout_width="150dp"
+        android:layout_marginBottom="16dp"
         android:layout_height="wrap_content"
         android:text="@string/replyButtonText"
         android:textSize="20sp"
         android:id="@+id/replyButton"
+        android:background="@color/primary"
         android:layout_alignParentBottom="true"
-        android:textColor="@color/primary_dark"
+        android:textColor="@color/white"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
