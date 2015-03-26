@@ -1,18 +1,24 @@
 package huka.com.repli;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import adapters.MyFragmentPagerAdapter;
 import slidingtabs.SlidingTabLayout;
+import views.TypefaceSpan;
 
 /**
  * Starts the viewPager which holds CameraFragment and RepliesFragment.
@@ -57,6 +63,13 @@ public class MainActivity extends FragmentActivity {
 
         // Disable elevation for actionbar
         getActionBar().setElevation(0);
+        SpannableString s = new SpannableString("Repli");
+        s.setSpan(new TypefaceSpan(this, "Pacifico.ttf"), 0, s.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        // Update the action bar title with the TypefaceSpan instance
+        ActionBar actionBar = getActionBar();
+        actionBar.setTitle(s);
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(adapter);

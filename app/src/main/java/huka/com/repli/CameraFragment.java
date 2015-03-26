@@ -107,7 +107,13 @@ public class CameraFragment extends android.support.v4.app.Fragment {
             @Override
             public void onItemClick(View v, int position) {
                 Intent intent = new Intent(getActivity(), ViewReplyActivity.class);
-                intent.putExtra("picture", mDataset.get(position).getImage());
+
+                Bitmap image = mDataset.get(position).getBitmapImage();
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] imageBytes = stream.toByteArray();
+
+                intent.putExtra("picture", imageBytes);
                 intent.putExtra("accountName", mDataset.get(position).getUsername());
                 startActivityForResult(intent, 0);
             }

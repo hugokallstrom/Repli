@@ -41,10 +41,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
                 ownerDomain = "backend.myapplication.hugo.example.com",
                 ownerName = "backend.myapplication.hugo.example.com",
                 packagePath = ""
-        ),
-        scopes = {AuthorizationConstants.EMAIL_SCOPE},
-        clientIds = {AuthorizationConstants.WEB_CLIENT_ID, AuthorizationConstants.ANDROID_CLIENT_ID},
-        audiences = {AuthorizationConstants.ANDROID_AUDIENCE}
+        )
 )
 public class ReplyInfoEndpoint {
 
@@ -94,13 +91,13 @@ public class ReplyInfoEndpoint {
                 tempReplyInfo.setReplied(true);
                 objectify.save().entity(tempReplyInfo).now();
                 Sender sender = new Sender(API_KEY);
-                Message msg = new Message.Builder().addData("accName", tempReplyInfo.getAccountName()).build();
+                Message msg = new Message.Builder().addData("accName", tempReplyInfo.getMyAccountName()).build();
                 sender.send(msg, tempReplyInfo.getGcmId(), 5);
             } else {
                 objectify.save().entity(replyInfo).now();
                 logger.info("Created ReplyInfo.");
                 Sender sender = new Sender(API_KEY);
-                Message msg = new Message.Builder().addData("accName", replyInfo.getAccountName()).build();
+                Message msg = new Message.Builder().addData("accName", replyInfo.getMyAccountName()).build();
                 sender.send(msg, replyInfo.getGcmId(), 5);
             }
         } catch (NotFoundException e) {

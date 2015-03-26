@@ -13,7 +13,7 @@
         android:layout_width="240dp"
         android:layout_height="60dp"
         android:text="@string/login_text"
-        android:textColor="@color/white"
+        android:textColor="@color/primary"
         android:id="@+id/loginButton"
         android:ems="10"
         android:layout_centerVertical="true"

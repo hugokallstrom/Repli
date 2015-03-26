@@ -79,7 +79,7 @@ public class MyRecyclerCameraAdapter extends RecyclerView.Adapter<MyRecyclerCame
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         String imageUrl = mDataSet.get(position).getThumbnail();
-        new DownloadImageTask(viewHolder.getRandomImage()).execute(imageUrl);
+        new DownloadImageTask(viewHolder.getRandomImage()).execute(imageUrl, String.valueOf(position));
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -97,15 +97,17 @@ public class MyRecyclerCameraAdapter extends RecyclerView.Adapter<MyRecyclerCame
 
         protected Bitmap doInBackground(String... urls) {
             String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
+            String position = urls[1];
+            Bitmap bitmap = null;
             try {
                 InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
+                bitmap = BitmapFactory.decodeStream(in);
+                mDataSet.get(Integer.valueOf(position)).setBitmapImage(bitmap);
             } catch (Exception e) {
                 Log.e("Error", e.getMessage());
                 e.printStackTrace();
             }
-            return mIcon11;
+            return bitmap;
         }
 
         protected void onPostExecute(Bitmap result) {
