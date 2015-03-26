@@ -50,6 +50,7 @@ public class SendReplyAsyncTask extends AsyncTask<String, Void, String>  {
             try {
                 String pictureUrl = getPictureUrl();
                 UserInfo userInfo = userService.getUser(LoginActivity.accountName).execute();
+                System.out.println("User info accname: " + userInfo.getAccountName());
                 ReplyInfo replyInfo = buildReplyInfo(userInfo, pictureUrl);
                 replyService.insert(replyInfo).execute();
                 replyService.replied(LoginActivity.accountName, receiverAccountName).execute();

@@ -76,22 +76,37 @@ public class ReplyInfoEndpoint {
             path = "replyInfo",
             httpMethod = ApiMethod.HttpMethod.POST)
     public void insert(ReplyInfo replyInfo) {
-        objectify = OfyService.ofy();
-        ReplyInfo tempReplyInfo = conversationExists(replyInfo.getAccountName(), replyInfo.getMyAccountName());
-        if(tempReplyInfo != null) {
-            tempReplyInfo.setPictureUrl(replyInfo.getPictureUrl());
-            tempReplyInfo.setTimeStamp(replyInfo.getTimeStamp());
-            objectify.save().entity(tempReplyInfo).now();
-        } else {
+        try {
+            objectify = OfyService.ofy();
+            ReplyInfo tempReplyInfo;
+            tempReplyInfo = conversationExists(replyInfo.getAccountName(), replyInfo.getMyAccountName());
+
+            if(tempReplyInfo != null) {
+                logger.info("Conv exists");
+                tempReplyInfo.setPictureUrl(replyInfo.getPictureUrl());
+                tempReplyInfo.setTimeStamp(replyInfo.getTimeStamp());
+                tempReplyInfo.setReplied(true);
+                objectify.save().entity(tempReplyInfo).now();
+            } else {
+                objectify.save().entity(replyInfo).now();
+                logger.info("Created ReplyInfo.");
+            }
+        } catch (NotFoundException e) {
             objectify.save().entity(replyInfo).now();
             logger.info("Created ReplyInfo.");
+            e.printStackTrace();
         }
     }
 
-    private ReplyInfo conversationExists(String myAccountName, String receiverAccountName) {
-        return objectify.load().type(ReplyInfo.class)
-                .filter("myAccountName", myAccountName)
-                .filter("accountName", receiverAccountName).first().now();
+    private ReplyInfo conversationExists(String myAccountName, String receiverAccountName) throws NotFoundException {
+        objectify = ObjectifyService.ofy();
+        try {
+            return objectify.load().type(ReplyInfo.class)
+                    .filter("myAccountName", myAccountName)
+                    .filter("accountName", receiverAccountName).first().now();
+        } catch (com.googlecode.objectify.NotFoundException e) {
+            throw new NotFoundException("Could not find ReplyInfo with ID: " + myAccountName);
+        }
     }
 
     @ApiMethod(name = "replied")
