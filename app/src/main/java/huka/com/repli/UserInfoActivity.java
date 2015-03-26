@@ -48,9 +48,10 @@ public class UserInfoActivity extends Activity {
 
     private void setUsername() {
         sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
-        String username = sharedPreferences.getString("USERNAME", "none");
+        String username = sharedPreferences.getString("accountName", "none");
         usernameText.setText(username);
-        emailText.setText(username);
+        //emailText.setText(username);
+        emailText.setVisibility(View.GONE);
     }
 
     private void setProfilePicture() {

@@ -115,8 +115,8 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         ReplyInfo replyInfo = mDataSet.get(position);
         int bordercolor;
-        new DownloadImageTask(viewHolder.getThumbnailView()).execute(replyInfo.getImage());
-        new DownloadImageTask(viewHolder.getProfilePictureView()).execute(replyInfo.getProfilePicture());
+        new DownloadImageTask(viewHolder.getThumbnailView()).execute(replyInfo.getImage(), String.valueOf(position));
+        new DownloadImageTask(viewHolder.getProfilePictureView()).execute(replyInfo.getProfilePicture(), String.valueOf(position));
         viewHolder.getUsernameText().setText(replyInfo.getUsername());
         viewHolder.getDateTxt().setText(replyInfo.getDate());
         viewHolder.getThumbnailView().setColorFilter(R.color.primary);
@@ -147,6 +147,7 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+
         ImageView bmImage;
 
         public DownloadImageTask(ImageView bmImage) {
@@ -155,15 +156,17 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
 
         protected Bitmap doInBackground(String... urls) {
             String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
+            String position = urls[1];
+            Bitmap bitmap = null;
             try {
                 InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
+                bitmap = BitmapFactory.decodeStream(in);
+                mDataSet.get(Integer.valueOf(position)).setBitmapImage(bitmap);
             } catch (Exception e) {
                 Log.e("Error", e.getMessage());
                 e.printStackTrace();
             }
-            return mIcon11;
+            return bitmap;
         }
 
         protected void onPostExecute(Bitmap result) {

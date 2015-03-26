@@ -14,6 +14,7 @@ public class ReplyInfo {
     private String profilePicture;
     private String thumbnail;
     private String image;
+    private Bitmap bitmapImage;
 
     public ReplyInfo(String username) {
         this.username = username;
@@ -61,5 +62,13 @@ public class ReplyInfo {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public void setBitmapImage(Bitmap image) {
+        bitmapImage = image;
+    }
+
+    public Bitmap getBitmapImage() {
+        return bitmapImage;
     }
 }

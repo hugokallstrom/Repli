@@ -40,11 +40,15 @@
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
+        android:layout_marginBottom="16dp"
         android:layout_height="wrap_content"
         android:text="Change profile picture"
+        android:textSize="20sp"
         android:id="@+id/userinfo_changepictureButton"
+        android:background="@color/primary"
         android:layout_alignParentBottom="true"
+        android:textColor="@color/white"
         android:layout_centerHorizontal="true"
         android:onClick="changePictureListener"/>
 

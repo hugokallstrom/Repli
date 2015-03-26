@@ -58,9 +58,9 @@ public class ViewReplyActivity extends Activity {
     }
 
     private void setBackgroundPicture() {
-        Bundle extras = getIntent().getExtras();
-        String pictureUrl = extras.getString("picture");
-        new DownloadImageTask(image).execute(pictureUrl);
+        byte[] byteArray = getIntent().getByteArrayExtra("picture");
+        Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+        image.setImageBitmap(bmp);
     }
 
     private void setImageFileDir() {

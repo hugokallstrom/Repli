@@ -92,9 +92,13 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
                 if(!mDataset.get(position).isReplied()) {
                     return;
                 }
+                Bitmap image = mDataset.get(position).getBitmapImage();
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] imageBytes = stream.toByteArray();
 
                 Intent intent = new Intent(getActivity(), ViewReplyActivity.class);
-                intent.putExtra("picture", mDataset.get(position).getImage());
+                intent.putExtra("picture", imageBytes);
                 intent.putExtra("accountName", mDataset.get(position).getUsername());
                 startActivityForResult(intent, 0);
             }
