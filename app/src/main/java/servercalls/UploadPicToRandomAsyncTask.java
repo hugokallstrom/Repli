@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 
+import huka.com.repli.LoginActivity;
 import huka.com.repli.R;
 
 /**
@@ -31,17 +32,17 @@ import huka.com.repli.R;
 public class UploadPicToRandomAsyncTask extends AsyncTask<File, Void, String>  {
 
     private static RandomListApi randomService = null;
-    private Context context;
+    private String accountName = LoginActivity.accountName;
 
     public UploadPicToRandomAsyncTask(Context context) {
-        this.context = context;
+
     }
 
     @Override
     protected String doInBackground(File... params) {
         File imageFile = params[0];
         String url = "";
-        System.out.println("do back");
+        System.out.println("ACCOUNTNAME: " + accountName);
 
         if (randomService == null) {
             System.out.println("reg serv == null");
@@ -51,8 +52,8 @@ public class UploadPicToRandomAsyncTask extends AsyncTask<File, Void, String>  {
         }
             try {
                 System.out.println("regserv");
-                RandomList replys = randomService.getUploadUrl(getAccountName()).execute();
-                HttpResponse response = uploadImage((String) replys.getPictures().get(getAccountName()), imageFile);
+                RandomList replys = randomService.getUploadUrl(accountName).execute();
+                HttpResponse response = uploadImage((String) replys.getPictures().get(accountName), imageFile);
                 url = saveToDB(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -83,29 +84,16 @@ public class UploadPicToRandomAsyncTask extends AsyncTask<File, Void, String>  {
     private String saveToDB(HttpResponse response) throws JSONException, IOException {
         JSONObject jsonObject = new JSONObject(EntityUtils.toString(response.getEntity()));
         String profilePictureUrl = jsonObject.getString("servingUrl");
-        String accountName = getAccountName();
 
-        String[] parts = profilePictureUrl.split("/_ah/img/");
+        String[] parts = profilePictureUrl.split(".com/");
       //  String part1 = parts[0];
         String blobKey = parts[1];
         System.out.println("Adding picture! " + profilePictureUrl + "BLOBKEY " + blobKey        );
         RandomList randomList = randomService.addPicture(blobKey, accountName).execute();
         System.out.println("profpic: " + profilePictureUrl + " accName;: " + accountName);
-        String url = (String) randomList.getPictures().get(getAccountName());
+        String url = (String) randomList.getPictures().get(accountName);
         System.out.println("URL: " + url);
         return "";
     }
 
-    private String getAccountName() {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
-        String username = sharedPreferences.getString("USERNAME", "none");
-        return username;
-    }
-
-    @Override
-    protected void onPostExecute(String url) {
-        if (!url.equals("")) {
-            Toast.makeText(context, "Profile picture changed", Toast.LENGTH_LONG).show();
-        }
-    }
 }

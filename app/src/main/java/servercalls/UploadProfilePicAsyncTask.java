@@ -43,6 +43,7 @@ public class UploadProfilePicAsyncTask extends  AsyncTask<File, Void, String> {
     @Override
     protected String doInBackground(File... params) {
         File imageFile = params[0];
+
         String url = "";
         if (regService == null) {
             regService = ServiceBuilder.buildUserInfoService();
@@ -63,20 +64,13 @@ public class UploadProfilePicAsyncTask extends  AsyncTask<File, Void, String> {
     private String saveProfilePicToDB(HttpResponse response) throws JSONException, IOException {
         JSONObject jsonObject = new JSONObject(EntityUtils.toString(response.getEntity()));
         String profilePictureUrl = jsonObject.getString("servingUrl");
-        String accountName = getAccountName();
         UserInfo userInfo = new UserInfo();
-        userInfo.setAccountName(accountName);
+        userInfo.setAccountName(LoginActivity.accountName);
         userInfo.setProfilePictureUrl(profilePictureUrl);
         UserInfo userInfoRes = regService.addProfilePicture(userInfo).execute();
         String url = userInfoRes.getProfilePictureUrl();
         System.out.println("URL: " + url);
         return url;
-    }
-
-    private String getAccountName() {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
-        String username = sharedPreferences.getString("USERNAME", "none");
-        return username;
     }
 
     @Override

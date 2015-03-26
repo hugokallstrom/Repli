@@ -1,12 +1,16 @@
 package adapters;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import huka.com.repli.BitmapDecoder;
@@ -75,14 +79,38 @@ public class MyRecyclerCameraAdapter extends RecyclerView.Adapter<MyRecyclerCame
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         String imageUrl = mDataSet.get(position).getThumbnail();
-        Bitmap image = BitmapDecoder.getBitmapFromURL(imageUrl);
-        viewHolder.getRandomImage().setImageBitmap(image);
+        new DownloadImageTask(viewHolder.getRandomImage()).execute(imageUrl);
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mDataSet.size();
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
     }
 }
 
