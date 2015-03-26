@@ -90,25 +90,23 @@ public class ReplyInfoEndpoint {
                 tempReplyInfo.setTimeStamp(replyInfo.getTimeStamp());
                 tempReplyInfo.setReplied(true);
                 objectify.save().entity(tempReplyInfo).now();
+                Sender sender = new Sender(API_KEY);
+                Message msg = new Message.Builder().addData("accName", tempReplyInfo.getMyAccountName()).build();
+                sender.send(msg, tempReplyInfo.getGcmId(), 5);
             } else {
                 objectify.save().entity(replyInfo).now();
                 logger.info("Created ReplyInfo.");
-            }
-            Sender sender = new Sender(API_KEY);
-            Message msg = new Message.Builder().addData("accName", tempReplyInfo.getMyAccountName()).build();
-            try {
-                sender.send(msg, tempReplyInfo.getGcmId(), 5);
-            } catch (IOException e) {
-                System.out.println("Exception sending to device!");
+                Sender sender = new Sender(API_KEY);
+                Message msg = new Message.Builder().addData("accName", replyInfo.getMyAccountName()).build();
+                sender.send(msg, replyInfo.getGcmId(), 5);
             }
         } catch (NotFoundException e) {
             objectify.save().entity(replyInfo).now();
             logger.info("Created ReplyInfo.");
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        replyInfo.getGcmId();
-                replyInfo.getMyAccountName();
     }
 
     private ReplyInfo conversationExists(String myAccountName, String receiverAccountName) throws NotFoundException {

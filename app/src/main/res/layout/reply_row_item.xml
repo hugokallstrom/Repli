@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/primary_dark"
+        android:scaleType="centerCrop"
         android:contentDescription="@string/thumbnail_description"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -49,16 +50,6 @@
             android:layout_below="@id/usernameText"
             android:layout_marginStart="70dp"
             android:textSize="12sp"/>
-
-        <ImageView
-            android:id="@+id/inactiveIcon"
-            android:layout_width="@dimen/activity_vertical_margin"
-            android:layout_height="@dimen/activity_vertical_margin"
-            android:layout_centerVertical="true"
-            android:src="@drawable/inactive_row"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="20dp"
-            android:visibility="gone"/>
 
     </RelativeLayout>
 
