@@ -167,7 +167,7 @@ public class CameraFragment extends android.support.v4.app.Fragment {
             String message = intent.getStringExtra("message");
             String account = intent.getStringExtra("account");
             System.out.println("cameraFrag " + message);
-            String url = "http://"+LoginActivity.LOCALHOST_IP2+":8080/_ah/img/"+message;
+            String url = "http://lh3.googleusercontent.com/"+message;
             System.out.println(url);
             new MyAsyncTask().execute(url, account);
         }
