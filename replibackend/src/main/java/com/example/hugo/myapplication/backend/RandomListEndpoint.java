@@ -80,7 +80,7 @@ public class RandomListEndpoint {
 
             for (RandomList randomList : replys.getItems()) {
                 System.out.println("size of randomList " + randomList.getPictures().size());
-                if(randomList.getPictures().size() < 2){
+                if(randomList.getPictures().size() < 1){
 
                     rep = randomList;
                     rep.setPictures(accountName, pictureUrl);
@@ -88,7 +88,7 @@ public class RandomListEndpoint {
                     objectify.save().entity(rep).now();
                     break;
                 }
-                if(randomList.getPictures().size() == 2){
+                if(randomList.getPictures().size() == 1){
                     System.out.println(accountName + " is 1!");
                     rep = randomList;
                     rep.setPictures(accountName, pictureUrl);
@@ -98,7 +98,7 @@ public class RandomListEndpoint {
 
                     break;
                 }
-                if(randomList.getPictures().size() > 2){
+                if(randomList.getPictures().size() > 1){
                     System.out.println(accountName + " > 1!");
                     rep.setPictures(accountName, pictureUrl);
                     objectify = OfyService.ofy();

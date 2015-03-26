@@ -81,7 +81,7 @@ public class ViewReplyActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
 
         public DownloadImageTask(ImageView bmImage) {
