@@ -36,7 +36,7 @@ public class GcmIntentService extends IntentService {
                 Intent cameraIntent = new Intent("unique_name");
 
                 //put whatever data you want to send, if any
-                cameraIntent.putExtra("message", extras.getString("message"));
+                cameraIntent.putExtra("message", extras.getString("message")).putExtra("account", extras.getString("account"));
                 System.out.println("send brodcast");
                 System.out.println("Blobkey from gcm: " + extras.getString("message"));
                 //send broadcast

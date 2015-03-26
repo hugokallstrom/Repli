@@ -80,7 +80,7 @@ public class RandomListEndpoint {
 
             for (RandomList randomList : replys.getItems()) {
                 System.out.println("size of randomList " + randomList.getPictures().size());
-                if(randomList.getPictures().size() < 3){
+                if(randomList.getPictures().size() < 2){
 
                     rep = randomList;
                     rep.setPictures(accountName, pictureUrl);
@@ -88,8 +88,8 @@ public class RandomListEndpoint {
                     objectify.save().entity(rep).now();
                     break;
                 }
-                if(randomList.getPictures().size() == 3){
-                    System.out.println(accountName + " is 4!");
+                if(randomList.getPictures().size() == 2){
+                    System.out.println(accountName + " is 1!");
                     rep = randomList;
                     rep.setPictures(accountName, pictureUrl);
                     objectify = OfyService.ofy();
@@ -98,8 +98,8 @@ public class RandomListEndpoint {
 
                     break;
                 }
-                if(randomList.getPictures().size() > 3){
-                    System.out.println(accountName + " > 3!");
+                if(randomList.getPictures().size() > 2){
+                    System.out.println(accountName + " > 1!");
                     rep.setPictures(accountName, pictureUrl);
                     objectify = OfyService.ofy();
                     objectify.save().entity(rep).now();
@@ -121,19 +121,24 @@ public class RandomListEndpoint {
         System.out.println("Send out pictures");
         for(String accName : sendOut.getPictures().keySet()){
             System.out.println(accName);
-            UserInfo userinfo = ofy().load().type(UserInfo.class).filter("accountName", accName).first().now();
-            if(userinfo != null){
-                System.out.println(userinfo.getGcmId());
-                Sender sender = new Sender(API_KEY);
-                Message msg = new Message.Builder().addData("message", sendOut.getPictures().get(accName)).build();
-                try {
-                    sender.send(msg, userinfo.getGcmId(), 5);
-                } catch (IOException e) {
-                    System.out.println("Exception sending to device!");
+            for(String sendFromAcc : sendOut.getPictures().keySet()) {
+                UserInfo userinfo = ofy().load().type(UserInfo.class).filter("accountName", accName).first().now();
+                UserInfo sendFromUser = ofy().load().type(UserInfo.class).filter("accountName", sendFromAcc).first().now();
+                if(accName != sendFromAcc) {
+                    if ((userinfo != null) && (sendFromAcc != null) ) {
+
+                        System.out.println(userinfo.getGcmId());
+                        Sender sender = new Sender(API_KEY);
+                        Message msg = new Message.Builder().addData("message", sendOut.getPictures().get(sendFromAcc)).addData("account", sendFromUser.getAccountName()).build();
+                        try {
+                            sender.send(msg, userinfo.getGcmId(), 5);
+                        } catch (IOException e) {
+                            System.out.println("Exception sending to device!");
+                        }
+                    } else {
+                        System.out.println(accName + " is not in db userList");
+                    }
                 }
-            }
-            else{
-                System.out.println(accName + " is not in db userList");
             }
         }
     }

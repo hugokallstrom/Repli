@@ -121,6 +121,7 @@ public class CameraFragment extends android.support.v4.app.Fragment {
 
                 Intent intent = new Intent(getActivity(), ViewReplyActivity.class);
                 intent.putExtra("picture", b);
+                intent.putExtra("accountName", mDataset.get(position).getUsername());
                 startActivityForResult(intent, 0);
             }
         });
@@ -166,6 +167,7 @@ public class CameraFragment extends android.support.v4.app.Fragment {
         protected Void doInBackground(String... params) {
             System.out.println("myAsyncTask!");
             String url = params[0];
+            String account = params[1];
 //            String url = "http://"+LoginActivity.LOCALHOST_IP2+":8080/_ah/img/"+blobKey;
             Bitmap picture = getBitmapFromURL(url);
             mDataset.clear();
@@ -173,9 +175,10 @@ public class CameraFragment extends android.support.v4.app.Fragment {
                 BitmapDecoder bitmapDecoder = new BitmapDecoder(getActivity());
 
                 Bitmap thumbImage = ThumbnailUtils.extractThumbnail(picture, bitmapDecoder.getScreenWidth(), 600);
-                ReplyInfo replyInfo = new ReplyInfo("tester");
+                ReplyInfo replyInfo = new ReplyInfo(account);
                 replyInfo.setImage(picture);
                 replyInfo.setThumbnail(thumbImage);
+
                 mDataset.add(replyInfo);
 
             return null;
@@ -214,10 +217,11 @@ public class CameraFragment extends android.support.v4.app.Fragment {
 
             // Extract data included in the Intent
             String message = intent.getStringExtra("message");
+            String account = intent.getStringExtra("account");
             System.out.println("cameraFrag " + message);
             String url = "http://"+LoginActivity.LOCALHOST_IP2+":8080/_ah/img/"+message;
             System.out.println(url);
-            new MyAsyncTask().execute(url);
+            new MyAsyncTask().execute(url, account);
         }
     };
 }

@@ -47,9 +47,13 @@ public class UploadPicToRandomAsyncTask extends AsyncTask<File, Void, String>  {
         File imageFile = params[0];
         String url = "";
         System.out.println("do back");
-        if (regService == null) {
 
+        if (regService == null) {
+            System.out.println("reg serv == null");
             buildService();
+        }else{
+            System.out.println("reg serv != null");
+        }
             try {
                 System.out.println("regserv");
                 RandomList replys = regService.getUploadUrl(getAccountName()).execute();
@@ -61,7 +65,7 @@ public class UploadPicToRandomAsyncTask extends AsyncTask<File, Void, String>  {
             catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
+
         return url;
     }
 
@@ -91,10 +95,6 @@ public class UploadPicToRandomAsyncTask extends AsyncTask<File, Void, String>  {
         String blobKey = parts[1];
         System.out.println("Adding picture! " + profilePictureUrl + "BLOBKEY " + blobKey        );
         RandomList randomList = regService.addPicture(blobKey, accountName).execute();
-        RandomList randomList2 = regService.addPicture("kal1le", "liny2@gmail.com").execute();
-        RandomList randomList3 = regService.addPicture("kal1le", "liny26@gmail.com").execute();
-        RandomList randomList4 = regService.addPicture("kal1le", "liny27@gmail.com").execute();
-        RandomList randomList5 = regService.addPicture("kal1le", "liny28@gmail.com").execute();
         System.out.println("profpic: " + profilePictureUrl + " accName;: " + accountName);
         String url = (String) randomList.getPictures().get(getAccountName());
         System.out.println("URL: " + url);

@@ -57,5 +57,5 @@
 
         <service android:name=".GcmIntentService" />
     </application>
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 </manifest>
