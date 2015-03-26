@@ -24,15 +24,18 @@ import adapters.MyRecyclerCameraAdapter;
 import servercalls.UploadPicToRandomAsyncTask;
 
 public class GcmIntentService extends IntentService {
-
+    public static int NOTIFICATION_ID = 1;
     public GcmIntentService() {
         super("GcmIntentService");
     }
 
     public void showNotification(String title, String text){
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.camera_icon)
+                        .setSmallIcon(R.drawable.ic_launcher)
                         .setContentTitle(title)
                         .setContentText(text);
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -62,11 +65,10 @@ public class GcmIntentService extends IntentService {
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
         mBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
         // mId allows you to update the notification later on.
 
-        mNotificationManager.notify(0, mBuilder.build());
+        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
     @Override
     protected void onHandleIntent(Intent intent) {
