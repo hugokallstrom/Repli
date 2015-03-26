@@ -22,6 +22,31 @@ public class MainActivity extends FragmentActivity {
 
     private PagerAdapter adapter;
     private ViewPager viewPager;
+    private static boolean activityVisible;
+
+    public static boolean isActivityVisible() {
+        return activityVisible;
+    }
+
+    public static void activityResumed() {
+        activityVisible = true;
+    }
+
+    public static void activityPaused() {
+        activityVisible = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MainActivity.activityResumed();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MainActivity.activityPaused();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
