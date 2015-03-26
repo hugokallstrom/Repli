@@ -34,14 +34,22 @@ public class GcmIntentService extends IntentService {
             if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 Logger.getLogger("GCM_RECEIVED").log(Level.INFO, extras.toString());
                 Intent cameraIntent = new Intent("unique_name");
-
+                Intent repliIntent = new Intent("repli");
                 //put whatever data you want to send, if any
-                cameraIntent.putExtra("message", extras.getString("message")).putExtra("account", extras.getString("account"));
-                System.out.println("send brodcast");
-                System.out.println("Blobkey from gcm: " + extras.getString("message"));
-                //send broadcast
-                this.getApplication().sendBroadcast(cameraIntent);
-
+               if(extras.getString("message") != null) {
+                   cameraIntent.putExtra("message", extras.getString("message")).putExtra("account", extras.getString("account"));
+                   System.out.println("send brodcast");
+                   System.out.println("Blobkey from gcm: " + extras.getString("message"));
+                   //send broadcast
+                   this.getApplication().sendBroadcast(cameraIntent);
+               }
+                if(extras.getString("accName")!= null){
+                    repliIntent.putExtra("accName", extras.getString("accName"));
+                    System.out.println("send brodcast");
+                    System.out.println("Blobkey from gcm: " + extras.getString("accName"));
+                    //send broadcast
+                    this.getApplication().sendBroadcast(repliIntent);
+                }
                 //Toast.makeText(getApplicationContext(), extras.getString("message"), Toast.LENGTH_LONG).show();
 
 

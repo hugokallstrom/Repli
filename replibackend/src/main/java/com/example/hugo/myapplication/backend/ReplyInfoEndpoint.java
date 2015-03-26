@@ -1,5 +1,7 @@
 package com.example.hugo.myapplication.backend;
 
+import com.google.android.gcm.server.Message;
+import com.google.android.gcm.server.Sender;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
@@ -13,6 +15,7 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.cmd.Query;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +49,7 @@ public class ReplyInfoEndpoint {
     private Objectify objectify;
 
     private static final int DEFAULT_LIST_LIMIT = 20;
-
+    private static final String API_KEY = "AIzaSyAAUv20Lcb7KqThX8g-3hmnhi66qUMvaTg";
     /**
      * Returns the {@link ReplyInfo} with the corresponding ID.
      *
@@ -91,11 +94,21 @@ public class ReplyInfoEndpoint {
                 objectify.save().entity(replyInfo).now();
                 logger.info("Created ReplyInfo.");
             }
+            Sender sender = new Sender(API_KEY);
+            Message msg = new Message.Builder().addData("accName", tempReplyInfo.getMyAccountName()).build();
+            try {
+                sender.send(msg, tempReplyInfo.getGcmId(), 5);
+            } catch (IOException e) {
+                System.out.println("Exception sending to device!");
+            }
         } catch (NotFoundException e) {
             objectify.save().entity(replyInfo).now();
             logger.info("Created ReplyInfo.");
             e.printStackTrace();
         }
+
+        replyInfo.getGcmId();
+                replyInfo.getMyAccountName();
     }
 
     private ReplyInfo conversationExists(String myAccountName, String receiverAccountName) throws NotFoundException {

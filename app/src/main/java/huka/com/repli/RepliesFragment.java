@@ -3,8 +3,11 @@ package huka.com.repli;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
@@ -209,4 +212,25 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.getActivity().registerReceiver(mMessageReceiver, new IntentFilter("repli"));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        this.getActivity().unregisterReceiver(mMessageReceiver);
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String repliAcc = intent.getStringExtra("accName");
+          //  String account = intent.getStringExtra("account");
+            System.out.println("repliFrag " + repliAcc);
+            new GetReplyListAsyncTask().execute(repliAcc);
+        }
+    };
 }
