@@ -164,21 +164,19 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
             if (replyService == null) {
                 replyService = ServiceBuilder.buildReplyInfoService();
                 try {
-                    buildTestReplyInfo(accountName);
                     ReplyInfoCollection replyInfoCollection = replyService.get(accountName).execute();
                     List<com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo> replyInfoList = replyInfoCollection.getItems();
-                    System.out.println("Replylist: " + replyInfoList.toString());
-
-                    for (com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo replyInfo : replyInfoList) {
-                        ReplyInfo replyInfoDataSet = new ReplyInfo(replyInfo.getAccountName());
-                        replyInfoDataSet.setDate(replyInfo.getTimeStamp());
-                        replyInfoDataSet.setReplied(replyInfo.getReplied());
-                        replyInfoDataSet.setImage(replyInfo.getPictureUrl());
-                        replyInfoDataSet.setProfilePicture(replyInfo.getProfilePictureUrl());
-                        replyInfoDataSet.setThumbnail(replyInfo.getPictureUrl());
-                        mDataset.add(replyInfoDataSet);
+                    if(replyInfoList != null) {
+                        for (com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo replyInfo : replyInfoList) {
+                            ReplyInfo replyInfoDataSet = new ReplyInfo(replyInfo.getAccountName());
+                            replyInfoDataSet.setDate(replyInfo.getTimeStamp());
+                            replyInfoDataSet.setReplied(replyInfo.getReplied());
+                            replyInfoDataSet.setImage(replyInfo.getPictureUrl());
+                            replyInfoDataSet.setProfilePicture(replyInfo.getProfilePictureUrl());
+                            replyInfoDataSet.setThumbnail(replyInfo.getPictureUrl());
+                            mDataset.add(replyInfoDataSet);
+                        }
                     }
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
