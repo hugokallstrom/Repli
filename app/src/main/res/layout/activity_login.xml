@@ -6,7 +6,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:background="#FFFFFF"
+    android:background="@color/primary"
     tools:context=".LoginActivity">
 
     <TextView
@@ -17,7 +17,8 @@
         android:layout_marginTop="80dp"
         android:gravity="center"
         android:textSize="100sp"
-        android:textColor="@color/primary"
+
+        android:textColor="@color/white"
         android:layout_centerHorizontal="true"/>
 
     <Button
@@ -25,9 +26,10 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_marginTop="30dp"
+        android:background="@drawable/ripple"
         android:text="@string/login_text"
-        android:textColor="@color/white"
-        android:background="@color/primary"
+        android:textColor="@color/primary"
+
         android:id="@+id/loginButton"
         android:layout_below="@id/logo"
         android:elevation="10dp"

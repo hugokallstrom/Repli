@@ -90,6 +90,8 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1 && resultCode != 0) {
+            mDataset.clear();
+            mAdapter.notifyDataSetChanged();
             UploadPicToRandomAsyncTask asyncTask = new UploadPicToRandomAsyncTask(this.getActivity());
             asyncTask.execute(file);
         }

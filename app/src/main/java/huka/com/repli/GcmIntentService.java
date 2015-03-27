@@ -113,8 +113,8 @@ public class GcmIntentService extends IntentService {
                     //send broadcast
                     this.getApplication().sendBroadcast(repliIntent);
                 }
-                //Toast.makeText(getApplicationContext(), extras.getString("message"), Toast.LENGTH_LONG).show();
 
+                //Toast.makeText(getApplicationContext(), extras.getString("message"), Toast.LENGTH_LONG).show();
 
 //                String accountName = intent.getStringExtra("accountName");
 //                Logger.getLogger("accountname received").log(Level.INFO, accountName);

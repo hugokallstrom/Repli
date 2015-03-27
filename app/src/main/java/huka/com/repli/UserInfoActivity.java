@@ -36,6 +36,7 @@ public class UserInfoActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_user_info);
         setImageFileDir();
         usernameText = (TextView) findViewById(R.id.userinfo_usernameText);
@@ -92,6 +93,7 @@ public class UserInfoActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.menu_user_info, menu);
         return true;
     }

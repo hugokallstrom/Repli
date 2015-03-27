@@ -51,7 +51,7 @@ public class RandomListEndpoint {
 
     private static final Logger logger = Logger.getLogger(RandomListEndpoint.class.getName());
     private Objectify objectify;
-    private static final int LIST_LIMIT = 2 ;
+    private static final int LIST_LIMIT = 4 ;
     private static final String API_KEY = "AIzaSyAAUv20Lcb7KqThX8g-3hmnhi66qUMvaTg";
 
     // TODO Change the returned url when deploying
