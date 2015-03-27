@@ -36,7 +36,7 @@ public class GcmIntentService extends IntentService {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setSmallIcon(R.drawable.status_icon)
                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
                         .setContentTitle(title)
                         .setContentText(text);
@@ -45,7 +45,7 @@ public class GcmIntentService extends IntentService {
 
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, MainActivity.class);
-        mBuilder.setLights(Color.rgb(18,255,0),500,500);
+        mBuilder.setLights(Color.WHITE,500,500);
         long[] pattern = {500,500,500,500};
         mBuilder.setVibrate(pattern);
         mBuilder.setAutoCancel(true);
