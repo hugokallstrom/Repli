@@ -9,5 +9,13 @@
         <item name="android:colorAccent">@color/accent</item>
         <item name="actionMenuTextColor">@color/primary</item>
         <item name="android:actionMenuTextColor">@color/primary</item>
+        <item name="android:itemTextAppearance">@style/TextAppearance</item>
+    </style>
+
+
+
+
+    <style name="TextAppearance">
+        <item name="android:textColor">@color/primary</item>
     </style>
 </resources>

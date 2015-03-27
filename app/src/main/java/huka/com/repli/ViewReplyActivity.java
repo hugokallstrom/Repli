@@ -46,7 +46,6 @@ public class ViewReplyActivity extends Activity {
         setImageFileDir();
         Button button = (Button) findViewById(R.id.replyButton);
         accountName = (String) getIntent().getExtras().getCharSequence("accountName");
-        button.getBackground().setAlpha(160);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

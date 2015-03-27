@@ -12,7 +12,7 @@ import huka.com.repli.RepliesFragment;
  * Adapter for the ViewPager, handles fragments.
  */
 public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
-    private String tabTitles[] = new String[] { "Chat", "Camera" };
+    private String tabTitles[] = new String[] { "Chat", "Random" };
     private Context context;
 
     public MyFragmentPagerAdapter(FragmentManager fm, Context context) {

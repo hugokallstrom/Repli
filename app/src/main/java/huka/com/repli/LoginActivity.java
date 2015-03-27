@@ -4,9 +4,11 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.hugo.myapplication.backend.userInfoApi.UserInfoApi;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -29,12 +31,18 @@ public class LoginActivity extends Activity {
     private SharedPreferences settings;
     private GoogleAccountCredential credential;
     public static String accountName;
+    private TextView logo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         checkCredentials();
         setContentView(R.layout.activity_login);
+        logo = (TextView) findViewById(R.id.logo);
+        Typeface tf = Typeface.createFromAsset(getAssets(),
+                "fonts/Pacifico.ttf");
+        logo.setTypeface(tf);
+        getActionBar().hide();
     }
 
     private void checkCredentials() {

@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -36,6 +37,7 @@ public class GcmIntentService extends IntentService {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_launcher)
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
                         .setContentTitle(title)
                         .setContentText(text);
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -97,7 +99,12 @@ public class GcmIntentService extends IntentService {
                 }
                 if(extras.getString("accName")!= null){
                     if(!MainActivity.isActivityVisible()) {
-                        showNotification("Repli", "New repli from " +  extras.getString("accName"));
+                        if(extras.getString("reciverAcc") != null) {
+                            showNotification("Repli", "New repli from " + extras.getString("reciverAcc"));
+                        }else{
+                            showNotification("Repli", "You recived a new repli!");
+                        }
+
                     }
 
                     repliIntent.putExtra("accName", extras.getString("accName"));

@@ -91,13 +91,13 @@ public class ReplyInfoEndpoint {
                 tempReplyInfo.setReplied(true);
                 objectify.save().entity(tempReplyInfo).now();
                 Sender sender = new Sender(API_KEY);
-                Message msg = new Message.Builder().addData("accName", tempReplyInfo.getMyAccountName()).build();
+                Message msg = new Message.Builder().addData("accName", tempReplyInfo.getMyAccountName()).addData("reciverAcc", tempReplyInfo.getAccountName()).build();
                 sender.send(msg, tempReplyInfo.getGcmId(), 5);
             } else {
                 objectify.save().entity(replyInfo).now();
                 logger.info("Created ReplyInfo.");
                 Sender sender = new Sender(API_KEY);
-                Message msg = new Message.Builder().addData("accName", replyInfo.getMyAccountName()).build();
+                Message msg = new Message.Builder().addData("accName", replyInfo.getMyAccountName()).addData("reciverAcc", replyInfo.getAccountName()).build();
                 sender.send(msg, replyInfo.getGcmId(), 5);
             }
         } catch (NotFoundException e) {
