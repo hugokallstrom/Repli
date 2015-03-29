@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.hugo.myapplication.backend.replyInfoApi.ReplyInfoApi;
 import com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfoCollection;
@@ -40,6 +41,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import adapters.ContactAdapter;
+import adapters.ContactInfo;
 import adapters.MyRecyclerReplyAdapter;
 import servercalls.RemoveReplyAsyncTask;
 import servercalls.ServiceBuilder;

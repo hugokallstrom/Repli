@@ -30,7 +30,10 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
+import adapters.ContactAdapter;
+import adapters.ContactInfo;
 import adapters.MyRecyclerCameraAdapter;
 import floatingactionbuttonbasic.FloatingActionButton;
 import servercalls.UploadPicToRandomAsyncTask;
@@ -98,10 +101,28 @@ public class CameraFragment extends android.support.v4.app.Fragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    private List createList(int size) {
+
+        List result = new ArrayList();
+        for (int i=1; i <= size; i++) {
+            ContactInfo ci = new ContactInfo();
+            ci.name = ContactInfo.NAME_PREFIX + i;
+            ci.surname = ContactInfo.SURNAME_PREFIX + i;
+            ci.email = ContactInfo.EMAIL_PREFIX + i + "@test.com";
+
+            result.add(ci);
+
+        }
+
+        return result;
+    }
+
     @Override
     public void onViewCreated(View view , Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mRecyclerView.setAdapter(mAdapter);
+        ContactAdapter ca = new ContactAdapter(createList(30));
+        mRecyclerView.setAdapter(ca);
+        //mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());

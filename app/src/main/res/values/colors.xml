@@ -5,4 +5,5 @@
     <color name="primary_dark">#29614A</color>
     <color name="white">#FFFFFF</color>
     <color name="accent">#343840</color>
+    <color name="greyOpacity">#6440454F</color>
 </resources>
