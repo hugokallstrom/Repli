@@ -43,14 +43,15 @@
         android:layout_width="300dp"
         android:layout_marginBottom="16dp"
         android:layout_height="wrap_content"
-        android:text="Change profile picture"
-        android:textSize="20sp"
+        android:text="Change profile pictUre"
         android:id="@+id/userinfo_changepictureButton"
         android:background="@drawable/ripple_view_image"
         android:layout_alignParentBottom="true"
         android:textColor="@color/white"
         android:layout_centerHorizontal="true"
-        android:onClick="changePictureListener"/>
+        android:onClick="changePictureListener"
+        android:typeface="normal"
+        android:singleLine="false" />
 
 
 </RelativeLayout>

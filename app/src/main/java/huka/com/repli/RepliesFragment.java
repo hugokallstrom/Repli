@@ -216,8 +216,6 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             String repliAcc = intent.getStringExtra("accName");
-          //  String account = intent.getStringExtra("account");
-            System.out.println("repliFrag " + repliAcc);
             new GetReplyListAsyncTask().execute(repliAcc);
         }
     };
