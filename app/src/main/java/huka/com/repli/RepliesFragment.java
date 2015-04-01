@@ -50,7 +50,7 @@ import servercalls.ServiceBuilder;
 public class RepliesFragment extends android.support.v4.app.Fragment {
 
     protected RecyclerView mRecyclerView;
-    protected MyRecyclerReplyAdapter mAdapter;
+    protected static MyRecyclerReplyAdapter mAdapter;
     protected ArrayList<ReplyInfo> mDataset = new ArrayList<>();
     FragmentActivity mActivity;
     private SwipeRefreshLayout mSwipeRefreshLayout;

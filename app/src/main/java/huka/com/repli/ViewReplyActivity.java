@@ -75,7 +75,12 @@ public class ViewReplyActivity extends Activity {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            startActivity(intent);
+            System.out.println("ACC NAME: " + accountName);
+            RepliesFragment.mAdapter.updateItemInListToAnswerd(accountName);
+          //  startActivity(intent);
+            Intent returnIntent = new Intent();
+            setResult(RESULT_CANCELED, returnIntent);
+            finish();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

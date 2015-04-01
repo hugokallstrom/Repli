@@ -12,6 +12,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +27,7 @@ import views.TypefaceSpan;
  */
 public class MainActivity extends FragmentActivity {
 
+    public static int SCREEN_HEIGHT = 0;
     private PagerAdapter adapter;
     private ViewPager viewPager;
     private static boolean activityVisible;
@@ -57,6 +59,11 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+      //  width = metrics.widthPixels;
+       SCREEN_HEIGHT = metrics.heightPixels;
         setContentView(R.layout.sliding_tab_layout);
         adapter = new MyFragmentPagerAdapter(getSupportFragmentManager(),
                 MainActivity.this);

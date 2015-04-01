@@ -104,6 +104,16 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
         mDataSet = dataSet;
     }
 
+    public void updateItemInListToAnswerd(String username){
+        for(ReplyInfo replies : mDataSet){
+            if(replies.getUsername().equalsIgnoreCase(username)){
+               replies.setReplied(false);
+
+               notifyDataSetChanged();
+               break;
+            }
+        }
+    }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View v = LayoutInflater.from(viewGroup.getContext())
@@ -120,7 +130,7 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
         new DownloadImageTask(viewHolder.getProfilePictureView(), false).execute(replyInfo.getProfilePicture(), String.valueOf(position));
         viewHolder.getUsernameText().setText(replyInfo.getUsername());
         viewHolder.getDateTxt().setText(replyInfo.getDate());
-        viewHolder.getThumbnailView().setColorFilter(R.color.primary);
+        //viewHolder.getThumbnailView().setColorFilter(R.color.primary);
 
         if(!replyInfo.isReplied()) {
             bordercolor = viewHolder.getInactiveColor();
@@ -166,6 +176,7 @@ public class MyRecyclerReplyAdapter extends RecyclerView.Adapter<MyRecyclerReply
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 bitmap = BitmapFactory.decodeStream(in);
                 if(!mDataSet.get(pos).isReplied()) {
+                    System.out.println("MAKING BITMAP BW");
                     bitmap = BitmapDecoder.makeBlackAndWhite(bitmap);
                 }
 
