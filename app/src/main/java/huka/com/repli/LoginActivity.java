@@ -73,6 +73,7 @@ public class LoginActivity extends Activity implements
                 && !mGoogleApiClient.isConnecting()) {
             mSignInClicked = true;
             resolveSignInError();
+
         }
     }
 

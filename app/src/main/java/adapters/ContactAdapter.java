@@ -57,6 +57,9 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
 
         @Override
         public boolean onLongClick(View v) {
+            if (mItemClickListener != null) {
+                return mItemClickListener.onItemLongClicked(getPosition());
+            }
             return false;
         }
     }
