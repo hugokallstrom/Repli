@@ -38,7 +38,7 @@ import java.util.List;
 
 import adapters.CameraAdapter;
 import adapters.ContactAdapter;
-import adapters.ContactInfo;
+
 import adapters.MyRecyclerCameraAdapter;
 import floatingactionbuttonbasic.FloatingActionButton;
 import servercalls.UploadPicToRandomAsyncTask;
@@ -51,7 +51,7 @@ import servercalls.UploadPicToRandomAsyncTask;
 public class CameraFragment extends android.support.v4.app.Fragment {
 
     protected RecyclerView mRecyclerView;
-    protected MyRecyclerCameraAdapter mAdapter;
+    protected ContactAdapter mAdapter;
     protected ArrayList<ReplyInfo> mDataset = new ArrayList<>();
     FragmentActivity mActivity;
 
@@ -91,7 +91,7 @@ public class CameraFragment extends android.support.v4.app.Fragment {
             }
         });
 
-        mAdapter = new MyRecyclerCameraAdapter(mDataset);
+        mAdapter = new ContactAdapter(mDataset);
         return rootView;
     }
 
@@ -110,10 +110,8 @@ public class CameraFragment extends android.support.v4.app.Fragment {
 
         List result = new ArrayList();
         for (int i=1; i <= size; i++) {
-            ContactInfo ci = new ContactInfo();
-            ci.name = ContactInfo.NAME_PREFIX + i;
-            ci.surname = ContactInfo.SURNAME_PREFIX + i;
-            ci.email = ContactInfo.EMAIL_PREFIX + i + "@test.com";
+
+            ReplyInfo ci = new ReplyInfo("Linus");
             result.add(ci);
         }
 
@@ -123,7 +121,7 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     @Override
     public void onViewCreated(View view , Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ContactAdapter ca = new ContactAdapter(createList(4));
+        ContactAdapter ca = new ContactAdapter(mDataset);
      //   mRecyclerView.setAdapter(new CameraAdapter(getActivity().getApplicationContext()));
         mRecyclerView.setAdapter(ca);
      //   mRecyclerView.setAdapter(mAdapter);
@@ -142,21 +140,21 @@ public class CameraFragment extends android.support.v4.app.Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mAdapter.SetOnItemClickListener(new MyRecyclerCameraAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View v, int position) {
-                Intent intent = new Intent(getActivity(), ViewReplyActivity.class);
-
-                Bitmap image = mDataset.get(position).getBitmapImage();
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                image.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] imageBytes = stream.toByteArray();
-
-                intent.putExtra("picture", imageBytes);
-                intent.putExtra("accountName", mDataset.get(position).getUsername());
-                startActivityForResult(intent, 0);
-            }
-        });
+//        mAdapter.SetOnItemClickListener(new MyRecyclerCameraAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(View v, int position) {
+//                Intent intent = new Intent(getActivity(), ViewReplyActivity.class);
+//
+//                Bitmap image = mDataset.get(position).getBitmapImage();
+//                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//                image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//                byte[] imageBytes = stream.toByteArray();
+//
+//                intent.putExtra("picture", imageBytes);
+//                intent.putExtra("accountName", mDataset.get(position).getUsername());
+//                startActivityForResult(intent, 0);
+//            }
+//        });
     }
 
     @Override
