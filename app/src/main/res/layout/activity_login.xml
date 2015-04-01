@@ -21,20 +21,15 @@
         android:textColor="@color/white"
         android:layout_centerHorizontal="true"/>
 
-    <Button
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
         android:layout_width="230dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/ripple"
-        android:text="@string/login_text"
-        android:textColor="@color/primary"
-
-        android:id="@+id/loginButton"
-        android:layout_below="@id/logo"
-        android:elevation="10dp"
         android:layout_centerHorizontal="true"
-        android:onClick="loginListener"/>
+        android:layout_marginTop="100dp"
+        android:layout_below="@id/logo"/>
 
     <TextView
         android:layout_width="match_parent"

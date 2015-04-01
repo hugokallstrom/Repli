@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -13,9 +16,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.InputStream;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import servercalls.UploadProfilePicAsyncTask;
@@ -49,19 +54,19 @@ public class UserInfoActivity extends Activity {
 
     private void setUsername() {
         sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
-        String username = sharedPreferences.getString("accountName", "none");
-        usernameText.setText(username);
-        //emailText.setText(username);
-        emailText.setVisibility(View.GONE);
+        String name = sharedPreferences.getString(LoginActivity.ACCOUNT_NAME, "none");
+        String email = sharedPreferences.getString(LoginActivity.EMAIL, "none");
+        usernameText.setText(name);
+        emailText.setText(email);
     }
 
     private void setProfilePicture() {
         sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
-        String imagePath = sharedPreferences.getString("PROFILE_PICTURE", "none");
-        if(imagePath.equals("none")) {
+        String profilePicUrl = sharedPreferences.getString(LoginActivity.PROF_PIC, "none");
+        if(profilePicUrl.equals("none")) {
             profilePicture.setImageResource(R.drawable.user_profile_picture);
         } else {
-            profilePicture.setImageURI(Uri.parse(imagePath));
+            new DownloadImageTask().execute(profilePicUrl);
         }
     }
 
@@ -93,7 +98,6 @@ public class UserInfoActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         getMenuInflater().inflate(R.menu.menu_user_info, menu);
         return true;
     }
@@ -105,6 +109,27 @@ public class UserInfoActivity extends Activity {
             DialogHandler.logoutDialog(this);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+
+        protected Bitmap doInBackground(String... urls) {
+            String profilePicUrl = urls[0];
+            Bitmap bitmap = null;
+
+            try {
+                InputStream in = new java.net.URL(profilePicUrl).openStream();
+                bitmap = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            profilePicture.setImageBitmap(result);
+        }
     }
 
 

@@ -34,11 +34,11 @@ public class UserInfoEndpoint {
     private Objectify objectify;
 
     @ApiMethod(name = "isRegistered")
-    public UserInfo isRegistered(@Named("accountName") String accountName) {
+    public UserInfo isRegistered(@Named("email") String email) {
         try {
-            checkExists(accountName);
+            checkExists(email);
             UserInfo userInfo = new UserInfo();
-            userInfo.setAccountName(accountName);
+            userInfo.setAccountName(email);
             return userInfo;
         } catch (NotFoundException e) {
             logger.info(e.getMessage());
@@ -67,31 +67,28 @@ public class UserInfoEndpoint {
      * Deletes the specified {@code UserInfo}.
      */
     @ApiMethod(name = "unregister")
-    public void unregister(@Named("accountName") String accountName) throws NotFoundException {
-        UserInfo userinfo = ofy().load().type(UserInfo.class).filter("accountName", accountName).first().now();
+    public void unregister(@Named("email") String email) throws NotFoundException {
+        UserInfo userinfo = ofy().load().type(UserInfo.class).filter("email", email).first().now();
         if(userinfo.id != null) {
             ofy().delete().type(UserInfo.class).id(userinfo.id).now();
             logger.info("Deleted UserInfo with ID: " + userinfo.id);
         }
     }
 
-    // TODO Change the returned url when deploying
     @ApiMethod(name = "getUploadUrl")
     public UserInfo getUploadUrl() {
         BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
         String blobUploadUrl = blobstoreService.createUploadUrl("/blob/upload");
-        //blobUploadUrl = blobUploadUrl.replace(AuthorizationConstants.COMPUTER_NAME, AuthorizationConstants.LOCAL_IP);
-        logger.info("bloburl: " + blobUploadUrl);
         UserInfo userInfo = new UserInfo();
         userInfo.setProfilePictureUrl(blobUploadUrl);
         return userInfo;
     }
 
     @ApiMethod(name = "getUser")
-    public UserInfo getUser(@Named("accountName") String accountName) {
+    public UserInfo getUser(@Named("email") String email) {
         UserInfo userInfo = null;
         try {
-            userInfo = checkExists(accountName);
+            userInfo = checkExists(email);
         } catch (NotFoundException e) {
             e.printStackTrace();
         }
@@ -100,24 +97,24 @@ public class UserInfoEndpoint {
 
     @ApiMethod(name = "addProfilePicture")
     public UserInfo addProiflePicture(UserInfo userInfo) {
-        String accountName = userInfo.getAccountName();
+        String email = userInfo.getEmail();
         String profilePictureUrl = userInfo.getProfilePictureUrl();
         objectify = OfyService.ofy();
-        UserInfo loadedUserInfo = objectify.load().type(UserInfo.class).filter("accountName", accountName).first().now();
+        UserInfo loadedUserInfo = objectify.load().type(UserInfo.class).filter("email", email).first().now();
         loadedUserInfo.setProfilePictureUrl(profilePictureUrl);
         objectify.save().entity(loadedUserInfo).now();
-        logger.info("saved profile picture for " + accountName + " with url" + profilePictureUrl);
+        logger.info("saved profile picture for " + email + " with url" + profilePictureUrl);
         return loadedUserInfo;
     }
 
-    private UserInfo checkExists(String accountName) throws NotFoundException {
+    private UserInfo checkExists(String email) throws NotFoundException {
         objectify = OfyService.ofy();
-        UserInfo userInfo = objectify.load().type(UserInfo.class).filter("accountName", accountName).first().now();
+        UserInfo userInfo = objectify.load().type(UserInfo.class).filter("email", email).first().now();
         if(userInfo == null) {
-            logger.info("user " + accountName + " not found");
+            logger.info("user " + email + " not found");
             throw new NotFoundException("account not found");
         }
-        logger.info("user " + accountName + " found");
+        logger.info("user " + email + " found");
         return userInfo;
     }
 
