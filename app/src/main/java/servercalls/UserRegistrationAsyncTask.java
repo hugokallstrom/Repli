@@ -34,15 +34,13 @@ public class UserRegistrationAsyncTask extends AsyncTask<String, Void, Boolean> 
             String gcmId = registerToGcm();
             UserInfo userInfo = buildUserInfo(gcmId, params);
             registerToService(userInfo);
-            saveCredentials(params);
+            saveCredentials(params, gcmId);
             return true;
         }
-        Log.v("register", "already registered");
         return false;
     }
 
     private Boolean isRegistered(String email) {
-        Log.v("register", "EMAIl:" + email);
         try {
             UserInfo userInfo = regService.isRegistered(email).execute();
             if(userInfo == null) {
@@ -83,21 +81,18 @@ public class UserRegistrationAsyncTask extends AsyncTask<String, Void, Boolean> 
                 gcm = GoogleCloudMessaging.getInstance(context);
             }
             regId = gcm.register(SENDER_ID);
-            String msg = "Device registered, registration ID=" + regId;
-            Logger.getLogger("REGISTRATION").log(Level.INFO, msg);
-            SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
-            sharedPreferences.edit().putString("GCM_ID", regId).apply();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
         return regId;
     }
 
-    private void saveCredentials(String[] params) {
+    private void saveCredentials(String[] params, String gcmId) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
         sharedPreferences.edit().putString(LoginActivity.EMAIL, params[0]).apply();
         sharedPreferences.edit().putString(LoginActivity.ACCOUNT_NAME, params[1]).apply();
         sharedPreferences.edit().putString(LoginActivity.PROF_PIC, params[2]).apply();
+        sharedPreferences.edit().putString(LoginActivity.GCM_ID, gcmId).apply();
     }
 
     @Override

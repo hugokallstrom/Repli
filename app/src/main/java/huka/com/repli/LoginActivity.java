@@ -30,6 +30,7 @@ public class LoginActivity extends Activity implements
     private static final String TAG = "LoginActivity";
     public static final String EMAIL = "email";
     public static final String PROF_PIC = "";
+    public static final String GCM_ID = "GCM_ID";
     public static String accountName;
     private TextView logo;
 

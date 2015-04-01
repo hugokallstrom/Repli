@@ -64,6 +64,12 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         mDataSet = dataSet;
     }
 
+    public void setmDataSet(ArrayList<ReplyInfo> mDataSet) {
+        this.mDataSet = mDataSet;
+        notifyDataSetChanged();
+
+    }
+
     public ArrayList<ReplyInfo> getmDataSet() {
         return mDataSet;
     }
@@ -74,7 +80,6 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.random_images_cardview, viewGroup, false);
         return new ViewHolder(v);
-
     }
 
     // Replace the contents of a view (invoked by the layout manager)

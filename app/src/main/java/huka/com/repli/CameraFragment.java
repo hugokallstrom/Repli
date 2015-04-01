@@ -18,6 +18,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -174,6 +175,7 @@ public class CameraFragment extends android.support.v4.app.Fragment {
             System.out.println("myAsyncTask!");
             String url = params[0];
             String account = params[1];
+            Log.v("params: ", params[0] + " " + params[1]);
             ReplyInfo replyInfo = new ReplyInfo(account);
             replyInfo.setImage(url);
             replyInfo.setThumbnail(url);
@@ -185,7 +187,7 @@ public class CameraFragment extends android.support.v4.app.Fragment {
         @Override
         protected void onPostExecute(Void response) {
             super.onPostExecute(response);
-            mAdapter.notifyDataSetChanged();
+            mAdapter.setmDataSet(mDataset);
         }
     }
 

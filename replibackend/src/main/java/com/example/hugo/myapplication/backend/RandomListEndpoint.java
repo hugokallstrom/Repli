@@ -51,7 +51,7 @@ public class RandomListEndpoint {
 
     private static final Logger logger = Logger.getLogger(RandomListEndpoint.class.getName());
     private Objectify objectify;
-    private static final int LIST_LIMIT = 4 ;
+    private static final int LIST_LIMIT = 1 ;
     private static final String API_KEY = "AIzaSyAAUv20Lcb7KqThX8g-3hmnhi66qUMvaTg";
 
     // TODO Change the returned url when deploying
@@ -59,10 +59,6 @@ public class RandomListEndpoint {
     public RandomList getUploadUrl(@Named("accName") String accName) {
         BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
         String blobUploadUrl = blobstoreService.createUploadUrl("/blob/upload");
-        System.out.println(blobUploadUrl);
-        blobUploadUrl = blobUploadUrl.replace("Maria-Dator", AuthorizationConstants.LOCAL_IP);
-        blobUploadUrl = blobUploadUrl.replace("debian", AuthorizationConstants.LOCAL_IP);
-        System.out.println(blobUploadUrl);
         logger.info("bloburl: " + blobUploadUrl);
         RandomList reply = new RandomList();
         reply.setProfilePictureUrl(accName, blobUploadUrl);
@@ -122,8 +118,8 @@ public class RandomListEndpoint {
         for(String accName : sendOut.getPictures().keySet()){
             System.out.println(accName);
             for(String sendFromAcc : sendOut.getPictures().keySet()) {
-                UserInfo userinfo = ofy().load().type(UserInfo.class).filter("accountName", accName).first().now();
-                UserInfo sendFromUser = ofy().load().type(UserInfo.class).filter("accountName", sendFromAcc).first().now();
+                UserInfo userinfo = ofy().load().type(UserInfo.class).filter("email", accName).first().now();
+                UserInfo sendFromUser = ofy().load().type(UserInfo.class).filter("email", sendFromAcc).first().now();
                 if(accName != sendFromAcc) {
                     if ((userinfo != null) && (sendFromAcc != null) ) {
 
