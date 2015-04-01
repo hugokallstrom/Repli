@@ -51,6 +51,7 @@ public class SendReplyAsyncTask extends AsyncTask<String, Void, String>  {
                 String pictureUrl = getPictureUrl();
                 UserInfo userInfoSender = userService.getUser(LoginActivity.accountName).execute();
                 UserInfo userInfoReceiver = userService.getUser(receiverAccountName).execute();
+
                 // set gcmId to receivers gcmId
                 userInfoSender.setGcmId(userInfoReceiver.getGcmId());
                 ReplyInfo replyInfo = buildReplyInfo(userInfoSender, pictureUrl);
