@@ -1,8 +1,6 @@
 package servercalls;
 
-import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -11,15 +9,12 @@ import android.widget.Toast;
 import com.example.hugo.myapplication.backend.userInfoApi.UserInfoApi;
 import com.example.hugo.myapplication.backend.userInfoApi.model.UserInfo;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import huka.com.repli.LoginActivity;
-import huka.com.repli.MainActivity;
 import huka.com.repli.R;
 
 public class UserRegistrationAsyncTask extends AsyncTask<String, Void, Boolean> {
@@ -39,16 +34,17 @@ public class UserRegistrationAsyncTask extends AsyncTask<String, Void, Boolean> 
             String gcmId = registerToGcm();
             UserInfo userInfo = buildUserInfo(gcmId, params);
             registerToService(userInfo);
-            saveUsername(params);
+            saveCredentials(params);
             return true;
         }
         Log.v("register", "already registered");
         return false;
     }
 
-    private Boolean isRegistered(String accountName) {
+    private Boolean isRegistered(String email) {
+        Log.v("register", "EMAIl:" + email);
         try {
-            UserInfo userInfo = regService.isRegistered(accountName).execute();
+            UserInfo userInfo = regService.isRegistered(email).execute();
             if(userInfo == null) {
                 Log.v("register", "not found");
                 return false;
@@ -63,9 +59,9 @@ public class UserRegistrationAsyncTask extends AsyncTask<String, Void, Boolean> 
     private UserInfo buildUserInfo(String gcmId, String... params) {
         UserInfo userInfo = new UserInfo();
         userInfo.setGcmId(gcmId);
-        userInfo.setAccountName(params[0]);
         userInfo.setEmail(params[0]);
-        userInfo.setProfilePictureUrl("http://upload.wikimedia.org/wikipedia/commons/1/13/Daniel_Ingram_Profile.png");
+        userInfo.setAccountName(params[1]);
+        userInfo.setProfilePictureUrl(params[2]);
         return userInfo;
     }
 
@@ -97,9 +93,11 @@ public class UserRegistrationAsyncTask extends AsyncTask<String, Void, Boolean> 
         return regId;
     }
 
-    private void saveUsername(String[] params) {
+    private void saveCredentials(String[] params) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
-        sharedPreferences.edit().putString(LoginActivity.PREF_ACCOUNT_NAME, params[0]).apply();
+        sharedPreferences.edit().putString(LoginActivity.EMAIL, params[0]).apply();
+        sharedPreferences.edit().putString(LoginActivity.ACCOUNT_NAME, params[1]).apply();
+        sharedPreferences.edit().putString(LoginActivity.PROF_PIC, params[2]).apply();
     }
 
     @Override
@@ -107,11 +105,5 @@ public class UserRegistrationAsyncTask extends AsyncTask<String, Void, Boolean> 
         if(bool) {
             Toast.makeText(context, "Successfully registered", Toast.LENGTH_LONG).show();
         }
-
-        Intent intent = new Intent(context, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        context.startActivity(intent);
     }
 }

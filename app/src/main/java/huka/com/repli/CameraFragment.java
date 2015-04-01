@@ -114,9 +114,7 @@ public class CameraFragment extends android.support.v4.app.Fragment {
             ci.name = ContactInfo.NAME_PREFIX + i;
             ci.surname = ContactInfo.SURNAME_PREFIX + i;
             ci.email = ContactInfo.EMAIL_PREFIX + i + "@test.com";
-
             result.add(ci);
-
         }
 
         return result;

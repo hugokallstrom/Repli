@@ -32,28 +32,31 @@ import huka.com.repli.R;
 public class UploadPicToRandomAsyncTask extends AsyncTask<File, Void, String>  {
 
     private static RandomListApi randomService = null;
-    private String accountName = LoginActivity.accountName;
+    private String email;
+    private Context context;
 
     public UploadPicToRandomAsyncTask(Context context) {
-
+        this.context = context;
     }
 
     @Override
     protected String doInBackground(File... params) {
         File imageFile = params[0];
         String url = "";
-        System.out.println("ACCOUNTNAME: " + accountName);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
+        email = sharedPreferences.getString(LoginActivity.EMAIL, "none");
+        System.out.println("ACCOUNTNAME: " + email);
 
         if (randomService == null) {
             System.out.println("reg serv == null");
             randomService = ServiceBuilder.buildRandomListService();
-        }else{
+        } else {
             System.out.println("reg serv != null");
         }
             try {
                 System.out.println("regserv");
-                RandomList replys = randomService.getUploadUrl(accountName).execute();
-                HttpResponse response = uploadImage((String) replys.getPictures().get(accountName), imageFile);
+                RandomList replys = randomService.getUploadUrl(email).execute();
+                HttpResponse response = uploadImage((String) replys.getPictures().get(email), imageFile);
                 url = saveToDB(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -61,7 +64,6 @@ public class UploadPicToRandomAsyncTask extends AsyncTask<File, Void, String>  {
             catch (JSONException e) {
                 e.printStackTrace();
             }
-
         return url;
     }
 
@@ -89,9 +91,9 @@ public class UploadPicToRandomAsyncTask extends AsyncTask<File, Void, String>  {
       //  String part1 = parts[0];
         String blobKey = parts[1];
         System.out.println("Adding picture! " + profilePictureUrl + "BLOBKEY " + blobKey        );
-        RandomList randomList = randomService.addPicture(blobKey, accountName).execute();
-        System.out.println("profpic: " + profilePictureUrl + " accName;: " + accountName);
-        String url = (String) randomList.getPictures().get(accountName);
+        RandomList randomList = randomService.addPicture(blobKey, email).execute();
+        System.out.println("profpic: " + profilePictureUrl + " email: " + email);
+        String url = (String) randomList.getPictures().get(email);
         System.out.println("URL: " + url);
         return "";
     }

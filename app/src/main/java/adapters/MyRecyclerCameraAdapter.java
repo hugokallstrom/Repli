@@ -66,6 +66,10 @@ public class MyRecyclerCameraAdapter extends RecyclerView.Adapter<MyRecyclerCame
         mDataSet = dataSet;
     }
 
+    public ArrayList<ReplyInfo> getmDataSet() {
+        return mDataSet;
+    }
+
     // Create new views (invoked by the layout manager)
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {

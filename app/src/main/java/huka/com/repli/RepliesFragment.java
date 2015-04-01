@@ -2,49 +2,34 @@ package huka.com.repli;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.example.hugo.myapplication.backend.replyInfoApi.ReplyInfoApi;
 import com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfoCollection;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
-import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import adapters.ContactAdapter;
-import adapters.ContactInfo;
 import adapters.MyRecyclerReplyAdapter;
-import servercalls.RemoveReplyAsyncTask;
 import servercalls.ServiceBuilder;
 
 public class RepliesFragment extends android.support.v4.app.Fragment {
@@ -155,7 +140,10 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
      * Generates Data for RecyclerView's adapter.
      */
     private void initDataset() {
-        new GetReplyListAsyncTask().execute(LoginActivity.accountName);
+        String email = PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(LoginActivity.ACCOUNT_NAME, "none");
+        if(!email.equals("none")) {
+            new GetReplyListAsyncTask().execute(email);
+        }
     }
 
     private class GetReplyListAsyncTask extends AsyncTask<String, Void, Void> {
@@ -169,12 +157,12 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
 
         @Override
         protected Void doInBackground(String... params) {
-            String accountName = params[0];
+            String email = params[0];
             mDataset = new ArrayList<>();
             if (replyService == null) {
                 replyService = ServiceBuilder.buildReplyInfoService();
                 try {
-                    ReplyInfoCollection replyInfoCollection = replyService.get(accountName).execute();
+                    ReplyInfoCollection replyInfoCollection = replyService.get(email).execute();
                     List<com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo> replyInfoList = replyInfoCollection.getItems();
                     if(replyInfoList != null) {
                         for (com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo replyInfo : replyInfoList) {
@@ -198,6 +186,7 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
         protected void onPostExecute(Void response) {
             super.onPostExecute(response);
             mAdapter.setDataSet(mDataset);
+
             mAdapter.notifyDataSetChanged();
         }
 

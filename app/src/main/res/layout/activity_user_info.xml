@@ -13,7 +13,7 @@
         android:layout_height="150dp"
         android:paddingTop="30dp"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/user_profile_picture"
+        android:src="@color/primary"
         app:border_width="2dp"
         app:border_color="@color/primary_dark"/>
 
@@ -22,7 +22,6 @@
         android:layout_height="wrap_content"
         android:paddingTop="15dp"
         android:textSize="20sp"
-        android:text="KoolKid14"
         android:textColor="@color/primary"
         android:id="@+id/userinfo_usernameText"
         android:layout_below="@+id/userinfo_picture"
@@ -33,7 +32,6 @@
         android:layout_height="wrap_content"
         android:paddingTop="3dp"
         android:textSize="13sp"
-        android:text="abramo@gmail.com"
         android:textColor="@color/primary_dark"
         android:id="@+id/userinfo_emailText"
         android:layout_below="@+id/userinfo_usernameText"

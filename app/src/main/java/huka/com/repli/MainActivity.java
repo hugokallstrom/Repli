@@ -17,6 +17,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.plus.Plus;
+
 import adapters.MyFragmentPagerAdapter;
 import slidingtabs.SlidingTabLayout;
 import views.TypefaceSpan;
