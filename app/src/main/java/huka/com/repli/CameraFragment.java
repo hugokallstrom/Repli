@@ -91,7 +91,8 @@ public class CameraFragment extends android.support.v4.app.Fragment {
                 startActivityForResult(imageIntent, CAPTURE_IMAGE_REQUEST_CODE);
             }
         });
-        mDataset.add(new ReplyInfo("linux"));
+
+        
         mAdapter = new ContactAdapter(mDataset);
         return rootView;
     }
