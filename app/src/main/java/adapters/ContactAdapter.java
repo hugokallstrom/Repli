@@ -62,6 +62,8 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     public ContactAdapter(ArrayList<ReplyInfo> dataSet) {
         super();
         mDataSet = dataSet;
+        System.out.println("-----------------------" + mDataSet.size());
+        notifyDataSetChanged();
     }
 
     public void setmDataSet(ArrayList<ReplyInfo> mDataSet) {

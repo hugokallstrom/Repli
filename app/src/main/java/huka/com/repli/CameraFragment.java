@@ -91,7 +91,7 @@ public class CameraFragment extends android.support.v4.app.Fragment {
                 startActivityForResult(imageIntent, CAPTURE_IMAGE_REQUEST_CODE);
             }
         });
-
+        mDataset.add(new ReplyInfo("linux"));
         mAdapter = new ContactAdapter(mDataset);
         return rootView;
     }
@@ -122,9 +122,9 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     @Override
     public void onViewCreated(View view , Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ContactAdapter ca = new ContactAdapter(mDataset);
+      //  ContactAdapter ca = new ContactAdapter(mDataset);
      //   mRecyclerView.setAdapter(new CameraAdapter(getActivity().getApplicationContext()));
-        mRecyclerView.setAdapter(ca);
+        mRecyclerView.setAdapter(mAdapter);
      //   mRecyclerView.setAdapter(mAdapter);
 
 //
