@@ -50,7 +50,7 @@ import servercalls.UploadPicToRandomAsyncTask;
  */
 public class CameraFragment extends android.support.v4.app.Fragment {
 
-    protected GridView gridView;
+    protected RecyclerView mRecyclerView;
     protected MyRecyclerCameraAdapter mAdapter;
     protected ArrayList<ReplyInfo> mDataset = new ArrayList<>();
     FragmentActivity mActivity;
@@ -78,8 +78,8 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.recycler_view_camera_frag, container, false);
-       // mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerCameraView);
-        gridView = (GridView) rootView.findViewById(R.id.gridview1);
+       mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerCameraView);
+      //  gridView = (GridView) rootView.findViewById(R.id.gridview1);
         File dir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         file = new File(dir+"/"+"reply.jpg");
         FloatingActionButton takePhotoButton = (FloatingActionButton) rootView.findViewById(R.id.takePhotoButton);
@@ -125,40 +125,40 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     @Override
     public void onViewCreated(View view , Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ContactAdapter ca = new ContactAdapter(createList(30));
-        //mRecyclerView.setAdapter(new CameraAdapter(getActivity().getApplicationContext()));
-        //mRecyclerView.setAdapter(ca);
-        //mRecyclerView.setAdapter(mAdapter);
+        ContactAdapter ca = new ContactAdapter(createList(4));
+     //   mRecyclerView.setAdapter(new CameraAdapter(getActivity().getApplicationContext()));
+        mRecyclerView.setAdapter(ca);
+     //   mRecyclerView.setAdapter(mAdapter);
 
-
-        gridView.setAdapter(new CameraAdapter(getActivity().getApplicationContext()));
-
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-
-
-            }
-        });
 //
-//        mRecyclerView.setHasFixedSize(true);
-//        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-//        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-//        mAdapter.SetOnItemClickListener(new MyRecyclerCameraAdapter.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(View v, int position) {
-//                Intent intent = new Intent(getActivity(), ViewReplyActivity.class);
+//        gridView.setAdapter(new CameraAdapter(getActivity().getApplicationContext()));
 //
-//                Bitmap image = mDataset.get(position).getBitmapImage();
-//                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//                image.compress(Bitmap.CompressFormat.PNG, 100, stream);
-//                byte[] imageBytes = stream.toByteArray();
+//        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            public void onItemClick(AdapterView<?> parent, View v,
+//                                    int position, long id) {
 //
-//                intent.putExtra("picture", imageBytes);
-//                intent.putExtra("accountName", mDataset.get(position).getUsername());
-//                startActivityForResult(intent, 0);
+//
 //            }
 //        });
+
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mAdapter.SetOnItemClickListener(new MyRecyclerCameraAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v, int position) {
+                Intent intent = new Intent(getActivity(), ViewReplyActivity.class);
+
+                Bitmap image = mDataset.get(position).getBitmapImage();
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] imageBytes = stream.toByteArray();
+
+                intent.putExtra("picture", imageBytes);
+                intent.putExtra("accountName", mDataset.get(position).getUsername());
+                startActivityForResult(intent, 0);
+            }
+        });
     }
 
     @Override
