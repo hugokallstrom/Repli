@@ -31,7 +31,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
 
         public ViewHolder(View v) {
             super(v);
-            randomImage = (ImageView) v.findViewById(R.id.randomImage);
+            randomImage = (ImageView) v.findViewById(R.id.cardImage);
             v.setOnClickListener(this);
         }
 
@@ -72,7 +72,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.camera_row_item, viewGroup, false);
+                .inflate(R.layout.random_images_cardview, viewGroup, false);
         return new ViewHolder(v);
 
     }

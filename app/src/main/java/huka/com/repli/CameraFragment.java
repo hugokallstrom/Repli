@@ -178,6 +178,7 @@ public class CameraFragment extends android.support.v4.app.Fragment {
             replyInfo.setImage(url);
             replyInfo.setThumbnail(url);
             mDataset.add(replyInfo);
+
             return null;
         }
 
