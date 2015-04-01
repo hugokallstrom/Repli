@@ -1,9 +1,11 @@
 package huka.com.repli;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -37,10 +39,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import adapters.CameraAdapter;
 import adapters.ContactAdapter;
 
-import adapters.MyRecyclerCameraAdapter;
 import floatingactionbuttonbasic.FloatingActionButton;
 import servercalls.UploadPicToRandomAsyncTask;
 
@@ -91,8 +91,10 @@ public class CameraFragment extends android.support.v4.app.Fragment {
                 startActivityForResult(imageIntent, CAPTURE_IMAGE_REQUEST_CODE);
             }
         });
-
-        
+        ReplyInfo rep = new ReplyInfo("linus");
+        rep.setImage("http://www.hovberg.se/resmi/norway_ej_photoshopad.jpg");
+        rep.setThumbnail("http://www.hovberg.se/resmi/norway_ej_photoshopad.jpg");
+        mDataset.add(rep);
         mAdapter = new ContactAdapter(mDataset);
         return rootView;
     }
@@ -142,21 +144,45 @@ public class CameraFragment extends android.support.v4.app.Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-//        mAdapter.SetOnItemClickListener(new MyRecyclerCameraAdapter.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(View v, int position) {
-//                Intent intent = new Intent(getActivity(), ViewReplyActivity.class);
-//
-//                Bitmap image = mDataset.get(position).getBitmapImage();
-//                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//                image.compress(Bitmap.CompressFormat.PNG, 100, stream);
-//                byte[] imageBytes = stream.toByteArray();
-//
-//                intent.putExtra("picture", imageBytes);
-//                intent.putExtra("accountName", mDataset.get(position).getUsername());
-//                startActivityForResult(intent, 0);
-//            }
-//        });
+
+        mAdapter.SetOnItemClickListener( new ContactAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v, int position) {
+                Intent intent = new Intent(getActivity(), ViewReplyActivity.class);
+
+                Bitmap image = mDataset.get(position).getBitmapImage();
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] imageBytes = stream.toByteArray();
+
+                intent.putExtra("picture", imageBytes);
+                intent.putExtra("accountName", mDataset.get(position).getUsername());
+                startActivityForResult(intent, 0);
+            }
+
+            @Override
+            public boolean onItemLongClicked(int position) {
+                final int itemPosition = position;
+                AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(getActivity());
+                dlgAlert.setTitle("Remove Conversation");
+                dlgAlert.setMessage("Do you want to remove this Conversation? (Cannot be undone)");
+                dlgAlert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mAdapter.removeItem(itemPosition);
+                    }
+                });
+                dlgAlert.setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                dlgAlert.create().show();
+                return true;
+            }
+        });
+
     }
 
     @Override

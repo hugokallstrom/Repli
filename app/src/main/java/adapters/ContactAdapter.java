@@ -8,28 +8,34 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import huka.com.repli.R;
 import huka.com.repli.ReplyInfo;
 
-public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
+public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
     private ArrayList<ReplyInfo> mDataSet;
     private OnItemClickListener mItemClickListener;
+
+    public ContactAdapter() {
+
+    }
+
+    public void removeItem(int itemPosition) {
+        mDataSet.remove(itemPosition);
+        notifyDataSetChanged();
+    }
 
     /**
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      */
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ContactViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         private final ImageView randomImage;
 
-        public ViewHolder(View v) {
+        public ContactViewHolder(View v) {
             super(v);
             randomImage = (ImageView) v.findViewById(R.id.cardImage);
             v.setOnClickListener(this);
@@ -41,15 +47,24 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
 
         @Override
         public void onClick(View v) {
+            System.out.println("CLICKED item");
+
             if (mItemClickListener != null) {
+                System.out.println("THIS ITEM + " + getPosition());
                 mItemClickListener.onItemClick(v, getPosition());
             }
         }
 
+        @Override
+        public boolean onLongClick(View v) {
+            return false;
+        }
     }
 
+
     public interface OnItemClickListener {
-        public void onItemClick(View view, int position);
+        public void onItemClick(View view , int position);
+        public boolean onItemLongClicked(int position);
     }
 
     public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
@@ -78,15 +93,15 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
 
     // Create new views (invoked by the layout manager)
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public ContactViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.random_images_cardview, viewGroup, false);
-        return new ViewHolder(v);
+        return new ContactViewHolder(v);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(ContactViewHolder viewHolder, final int position) {
         String imageUrl = mDataSet.get(position).getThumbnail();
         new DownloadImageTask(viewHolder.getRandomImage()).execute(imageUrl, String.valueOf(position));
     }
