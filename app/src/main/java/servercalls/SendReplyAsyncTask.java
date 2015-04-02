@@ -7,10 +7,6 @@ import com.example.hugo.myapplication.backend.replyInfoApi.ReplyInfoApi;
 import com.example.hugo.myapplication.backend.replyInfoApi.model.ReplyInfo;
 import com.example.hugo.myapplication.backend.userInfoApi.UserInfoApi;
 import com.example.hugo.myapplication.backend.userInfoApi.model.UserInfo;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
-import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -23,7 +19,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import huka.com.repli.Credentials;
 import huka.com.repli.LoginActivity;
+import huka.com.repli.R;
 
 /**
  * Created by hugo on 3/24/15.
@@ -35,6 +33,7 @@ public class SendReplyAsyncTask extends AsyncTask<String, Void, String>  {
     private final Context context;
     private String imagePath;
     private String receiverAccountName;
+    private String myEmail;
 
     public SendReplyAsyncTask(Context context) {
         this.context = context;
@@ -44,19 +43,20 @@ public class SendReplyAsyncTask extends AsyncTask<String, Void, String>  {
     protected String doInBackground(String... params) {
         imagePath = params[0];
         receiverAccountName = params[1];
+        myEmail = Credentials.getEmail(context);
         if (userService == null) {
             userService = ServiceBuilder.buildUserInfoService();
             replyService = ServiceBuilder.buildReplyInfoService();
             try {
                 String pictureUrl = getPictureUrl();
-                UserInfo userInfoSender = userService.getUser(LoginActivity.accountName).execute();
+                UserInfo userInfoSender = userService.getUser(myEmail).execute();
                 UserInfo userInfoReceiver = userService.getUser(receiverAccountName).execute();
 
                 // set gcmId to receivers gcmId
                 userInfoSender.setGcmId(userInfoReceiver.getGcmId());
                 ReplyInfo replyInfo = buildReplyInfo(userInfoSender, pictureUrl);
                 replyService.insert(replyInfo).execute();
-                replyService.replied(LoginActivity.accountName, receiverAccountName).execute();
+                replyService.replied(myEmail, receiverAccountName).execute();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {

@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 
+import huka.com.repli.Credentials;
 import huka.com.repli.LoginActivity;
 import huka.com.repli.R;
 
@@ -50,7 +51,6 @@ public class UploadProfilePicAsyncTask extends  AsyncTask<File, Void, String> {
             try {
                 UserInfo userInfo = regService.getUploadUrl().execute();
                 HttpResponse response = UploadImage.uploadImage(userInfo.getProfilePictureUrl(), imageFile);
-               // HttpResponse response = uploadImage(userInfo.getProfilePictureUrl(), imageFile);
                 url = saveProfilePicToDB(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -65,7 +65,7 @@ public class UploadProfilePicAsyncTask extends  AsyncTask<File, Void, String> {
         JSONObject jsonObject = new JSONObject(EntityUtils.toString(response.getEntity()));
         String profilePictureUrl = jsonObject.getString("servingUrl");
         UserInfo userInfo = new UserInfo();
-        userInfo.setAccountName(LoginActivity.accountName);
+        userInfo.setEmail(Credentials.getEmail(context));
         userInfo.setProfilePictureUrl(profilePictureUrl);
         UserInfo userInfoRes = regService.addProfilePicture(userInfo).execute();
         String url = userInfoRes.getProfilePictureUrl();

@@ -38,7 +38,7 @@ public class UserInfoEndpoint {
         try {
             checkExists(email);
             UserInfo userInfo = new UserInfo();
-            userInfo.setAccountName(email);
+            userInfo.setEmail(email);
             return userInfo;
         } catch (NotFoundException e) {
             logger.info(e.getMessage());

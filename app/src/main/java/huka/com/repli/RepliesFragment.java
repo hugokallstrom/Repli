@@ -87,6 +87,7 @@ public class RepliesFragment extends android.support.v4.app.Fragment {
 
                 Intent intent = new Intent(getActivity(), ViewReplyActivity.class);
                 intent.putExtra("picture", imageBytes);
+                // TODO change from username to email
                 intent.putExtra("accountName", mDataset.get(position).getUsername());
                 startActivityForResult(intent, 0);
             }

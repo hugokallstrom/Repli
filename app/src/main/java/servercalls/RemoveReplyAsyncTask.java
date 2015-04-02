@@ -27,7 +27,8 @@ public class RemoveReplyAsyncTask extends AsyncTask<ReplyInfo, Void, Void> {
             replyService = ServiceBuilder.buildReplyInfoService();
             try {
                 ReplyInfo replyInfo = params[0];
-                replyService.remove(LoginActivity.accountName, replyInfo.getUsername()).execute();
+                // TODO should use mail instead of account name
+                replyService.remove("none", replyInfo.getUsername()).execute();
             } catch (IOException e) {
                 e.printStackTrace();
             }
